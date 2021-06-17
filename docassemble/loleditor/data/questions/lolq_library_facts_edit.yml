@@ -1,0 +1,77 @@
+generic object: FactObject
+question: Edit Fact
+fields:
+  - Field: x.field
+    default: ${ x.field }
+    datatype: text
+    required: False
+  - Label: x.label
+    default: ${ x.label }
+    datatype: text
+    required: False
+  - Question: x.question 
+    default: ${ x.question }
+    datatype: text
+    required: False
+  - More Help: x.help
+    default: ${ x.help }
+    datatype: text
+    required: False
+  - Prefact: x.prefact
+    default: ${ x.prefact }
+    datatype: text
+    required: False
+  - Default: x.default
+    default: ${ x.default }
+    datatype: text
+    required: False
+  - Postfact: x.postfact
+    default: ${ x.postfact }
+    datatype: text
+    required: False
+  - Hint: x.hint 
+    default: ${ x.hint }
+    datatype: text
+    required: False
+  - Html: x.html 
+    default: ${ x.html }
+    datatype: text
+    required: False
+  - Note: x.note 
+    default: ${ x.note }
+    datatype: text
+    required: False
+  - Evidence Label: x.evlabel 
+    default: ${ x.evlabel }
+    datatype: text
+    required: False
+  - Evidence Hint: x.evhint 
+    default: ${ x.evhint }
+    datatype: text
+    required: False
+  - Evidence Explanation: x.evexplanation 
+    default: ${ x.evexplanation }
+    datatype: text
+    required: False
+  - Evidence Hint: x.evhint 
+    default: ${ x.evhint }
+    datatype: text
+    required: False
+  - Evidence Question: x.evquestion 
+    default: ${ x.evquestion }
+    datatype: text
+    required: False
+  - Type of Evidence: x.typeofevidencedefault 
+    required: False
+    input type: combobox
+    choices:
+      - NA
+      - JudicialNotice
+      - Documents
+      - PlaintiffEvidence
+      - Testimony
+      - WitnessTestimony
+continue button field: x.edited
+---
+  
+  

@@ -1,0 +1,72 @@
+---
+only sets: x.objectlinks['law_link'][i].existing_or_new
+generic object: DAObject
+if: |
+  library.complete_elements().last().review_choice == "edit"
+question: Law
+fields:
+  - Existing or New: x.objectlinks['law_link'][i].existing_or_new
+    input type: dropdown
+    choices:
+      - Existing
+      - New
+  - Pick existing: x.objectlinks['law_link'][i].new_a_id
+    input type: combobox
+    show if:
+      variable: x.objectlinks['law_link'][i].existing_or_new
+      is: Existing
+    code: alllaw_link
+  - Cite: x.objectlinks['law_link'][i].cite
+    show if:
+      variable: x.objectlinks['law_link'][i].existing_or_new
+      is: New
+  - Title: x.objectlinks['law_link'][i].Title
+    show if:
+      variable: x.objectlinks['law_link'][i].existing_or_new
+      is: New
+    required: false
+  - Summary: x.objectlinks['law_link'][i].summary
+    show if:
+      variable: x.objectlinks['law_link'][i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Quote: x.objectlinks['law_link'][i].quote
+    show if:
+      variable: x.objectlinks['law_link'][i].quote
+      is: New
+    required: false
+    input type: area
+  - Fact Description: x.objectlinks['law_link'][i].fact_description
+    show if:
+      variable: x.objectlinks['law_link'][i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Link: x.objectlinks['law_link'][i].link
+    show if:
+      variable: x.objectlinks['law_link'][i].existing_or_new
+      is: New
+    required: false
+  - Active: x.objectlinks['law_link'][i].active
+    datatype: yesno
+    show if:
+      variable: x.objectlinks['law_link'][i].existing_or_new
+      is: New
+    required: false
+  - Keep checked: x.objectlinks['law_link'][i].new_objectlink
+    show if:
+      variable: x.objectlinks['law_link'][i].existing_or_new
+      is: New
+    required: True
+    datatype: yesno
+    default: True
+---
+code: |
+  all_law_link = api_law_link.get_all()
+  alllaw_link = list()
+  for st in all_law_link:
+    if 'cite' in st['fields']:
+      alllaw_link.append({st['id']:st['fields']['cite']})
+---
+

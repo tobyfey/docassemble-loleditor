@@ -1,0 +1,100 @@
+---
+only sets: x.objectlinks['legalObjects'][i].existing_or_new
+generic object: DAObject
+if: |
+  library.complete_elements().last().review_choice == "edit"
+question: legalObjects
+fields:
+  - Existing or New: x.objectlinks['legalObjects'][i].existing_or_new
+    input type: dropdown
+    choices:
+      - Existing
+      - New
+  - Pick existing: x.objectlinks['legalObjects'][i].new_a_id
+    input type: combobox
+    show if:
+      variable: x.objectlinks['legalObjects'][i].existing_or_new
+      is: Existing
+    code: alllegalObjects
+  - Name: x.objectlinks['legalObjects'][i].name
+    show if:
+      variable: x.objectlinks['legalObjects'][i].existing_or_new
+      is: New
+  - Definition: x.objectlinks['legalObjects'][i].definition
+    show if:
+      variable: x.objectlinks['legalObjects'][i].existing_or_new
+      is: New
+    required: false
+  - Explanation: x.objectlinks['legalObjects'][i].explanation
+    show if:
+      variable: x.objectlinks['legalObjects'][i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Question: x.objectlinks['legalObjects'][i].question
+    show if:
+      variable: x.objectlinks['legalObjects'][i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Question In List: x.objectlinks['legalObjects'][i].question_in_list
+    show if:
+      variable: x.objectlinks['legalObjects'][i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Subsets Question: x.objectlinks['legalObjects'][i].subsets_question
+    show if:
+      variable: x.objectlinks['legalObjects'][i].existing_or_new
+      is: New
+    required: false
+  - Heading: x.objectlinks['legalObjects'][i].heading
+    show if:
+      variable: x.objectlinks['legalObjects'][i].existing_or_new
+      is: New
+    required: false
+  - Subheading: x.objectlinks['legalObjects'][i].subheading
+    show if:
+      variable: x.objectlinks['legalObjects'][i].existing_or_new
+      is: New
+    required: false
+  - Warning: x.objectlinks['legalObjects'][i].warning
+    show if:
+      variable: x.objectlinks['legalObjects'][i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Why: x.objectlinks['legalObjects'][i].why
+    show if:
+      variable: x.objectlinks['legalObjects'][i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Active: x.objectlinks['legalObjects'][i].active
+    show if:
+      variable: x.objectlinks['legalObjects'][i].existing_or_new
+      is: New
+    required: false
+    datatype: yesno
+  - Most Common: x.objectlinks['legalObjects'][i].most_common
+    show if:
+      variable: x.objectlinks['legalObjects'][i].existing_or_new
+      is: New
+    required: false
+    datatype: yesno
+  - Keep checked: x.objectlinks['legalObjects'][i].new_objectlink
+    show if:
+      variable: x.objectlinks['legalObjects'][i].existing_or_new
+      is: New
+    required: True
+    datatype: yesno
+    default: True
+---
+code: |
+  all_legalObjects = api_dictionary['legalObjects'].get_all()
+  alllegalObjects = list()
+  for st in all_legalObjects:
+    if 'name' in st['fields']:
+      alllegalObjects.append({st['id']:st['fields']['name']})
+---
+

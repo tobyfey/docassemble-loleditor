@@ -1,0 +1,50 @@
+generic object: Option
+question: Edit Option Object
+subquestion: |
+fields:
+  - Name: x.name
+    default: ${ x.name }
+    datatype: text
+    required: False
+  - Title: x.title
+    default: ${ x.title }
+    datatype: text
+    required: False
+  - Explanation: x.explanation
+    default: x.explanation
+    datatype: text
+    required: False
+  - More Help: x.more_help
+    default: x.more_help
+    datatype: text
+    required: False
+  - Requirement: x.requirement
+    default: ${ x.requirement }
+    datatype: text
+    required: False
+  - Warning: x.warning
+    default: ${ x.warning }
+    datatype: text
+    required: False
+  - Link: x.link
+    default: ${ x.link}
+    datatype: text
+    required: False
+  - Active: x.active
+    default: ${ x.active}
+    datatype: yesno
+    required: False
+  - Order number: x.order_number
+    default: ${ x.order_number }
+    datatype: number
+    required: False
+continue button field: x.edited
+under: |
+  Steps:
+  
+  ${ x.objectlinks['steps'].table }
+  
+  ${ x.objectlinks['steps'].add_action() }
+  
+  
+  

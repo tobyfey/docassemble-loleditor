@@ -1,0 +1,61 @@
+---
+id: info_screen
+question:  ${ app.issues.last() }
+subquestion: |
+  
+  
+  ** Referral Information **
+  % for key, val in app.specific_factors.iteritems():
+  
+  % if not key == "issues":
+  - ${ key }: 
+  % for something in val:
+  % if something == "Other":
+  Other
+  % else:
+  % for sfqldic in app.specific_factors[key].sfql:
+  % for sfqlkey in sfqldic:
+  % if something == sfqlkey:
+  ** ${ sfqldic[sfqlkey] } **
+  % endif
+  % endfor
+  % endfor
+  % endif
+  % endfor
+  % endif
+  % endfor
+  
+  
+  ** Legal Issues **
+  % if len(app.legalObjects) > 0:
+  Legal Objects: ${ app.legalObjects.ismet }
+  % endif
+  
+  
+  ** 
+  
+  % for step in app.ol_collections['steps']:
+  ${  step.name }
+  % endfor
+  
+  ${ infosheet_statement }
+field: app.final_choice
+buttons:
+  code: |
+    end_choices
+
+attachment code: |
+  infosheet_list
+comment: |
+  lolq_app_final_choice.yml
+---
+code: |
+  end_choices = list()
+  if defined('explanation_block'):
+    end_choices.append({'infosheet_editor':"Edit infosheet"})
+  else:
+    end_choices.append({'make_infosheet': "Make Infosheet"})
+  end_choices.append({'restart': "Restart without saving"}) 
+---
+
+  

@@ -1,0 +1,13 @@
+---
+question: Welcome to the Legal Objects Library
+subquestion: |
+  INSERT EXPLANATION ABOUT LEGAL OBJECTS LIBRARY
+field: start_choice
+choices: 
+  code: |
+    [{'library':"Browse, edit and add to the Legal Objects Library", 'help':"Test"},
+     {'app':"Input a specific case for legal information and forms"}]
+comment: |
+  start_choice question
+---
+  

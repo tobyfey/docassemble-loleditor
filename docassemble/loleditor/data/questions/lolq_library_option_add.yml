@@ -1,0 +1,85 @@
+---
+only sets: x.objectlinks['options'][i].existing_or_new
+generic object: DAObject
+if: |
+  library.complete_elements().last().review_choice == "edit"
+question: Options
+fields:
+  - Existing or New: x.objectlinks['options'][i].existing_or_new
+    input type: dropdown
+    choices:
+      - Existing
+      - New
+  - Pick existing step: x.objectlinks['options'][i].new_a_id
+    input type: combobox
+    show if:
+      variable: x.objectlinks['options'][i].existing_or_new
+      is: Existing
+    code: alloptions
+  - Name: x.objectlinks['options'][i].name
+    show if:
+      variable: x.objectlinks['options'][i].existing_or_new
+      is: New
+  - Title: x.objectlinks['options'][i].title
+    show if:
+      variable: x.objectlinks['options'][i].existing_or_new
+      is: New
+    required: false
+  - Explanation: x.objectlinks['options'][i].explanation
+    show if:
+      variable: x.objectlinks['options'][i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - More Help: x.objectlinks['options'][i].more_help
+    show if:
+      variable: x.objectlinks['options'][i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Requirement: x.objectlinks['options'][i].requirement
+    show if:
+      variable: x.objectlinks['options'][i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Warning: x.objectlinks['options'][i].warning
+    show if:
+      variable: x.objectlinks['options'][i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Link: x.objectlinks['options'][i].link
+    show if:
+      variable: x.objectlinks['options'][i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Active: x.objectlinks['options'][i].active
+    show if:
+      variable: x.objectlinks['options'][i].existing_or_new
+      is: New
+    required: false
+    datatype: yesno
+  - Order number: x.objectlinks['options'][i].order_number
+    show if:
+      variable: x.objectlinks['options'][i].existing_or_new
+      is: New
+    required: false
+    datatype: number
+  - Keep checked: x.objectlinks['options'][i].new_objectlink
+    show if:
+      variable: x.objectlinks['options'][i].existing_or_new
+      is: New
+    required: True
+    datatype: yesno
+    default: True
+---
+code: |
+  all_options = api_dictionary['options'].get_all()
+  alloptions = list()
+  for st in all_options:
+    if 'title' in st['fields']:
+      alloptions.append({st['id']:st['fields']['title']})
+---
+

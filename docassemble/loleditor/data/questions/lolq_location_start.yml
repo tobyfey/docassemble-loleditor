@@ -1,0 +1,41 @@
+question: Protocols
+subquestion: |
+  Please select filters to make a list of protocols
+fields:
+  - County: filter_county
+    input type: combobox
+    default: None
+    code: all_counties
+  - Practice Group: filter_practice_group
+    input type: combobox
+    default: None
+    code: all_practice_groups
+  - Issue: filter_issue
+    input type: combobox
+    default: None
+    code: all_issues
+  - Active cases: filter_active
+    datatype: yesno
+    default: True
+---
+code: |
+  api = api_dictionary['Jurisdiction'].get_all()
+  all_counties = list()
+  for st in api:
+    if 'name' in st['fields']:
+      if 'County' in st['fields']['jurisdiction_level']:
+        all_counties.append({st['id']:st['fields']['name']})
+  all_counties.append({"None":"None"})
+---
+code: |
+  api = api_dictionary['Referral'].get_all()
+  all_practice_groups = list()
+  for st in api:
+    if 'name' in st['fields']:
+      all_practice_groups.append({st['id']:st['fields']['name']})
+  all_practice_groups.append({"None":"None"})
+---
+code: |
+  all_issues = [{"VE":"Veterans and Military"},{"GO":"Government Services"},{"BE":"Benefits"},{"ED":"Education"},{"RI":"Civil and Human Rights"},{"TR":"Traffic and Cars"},{"NA":"Native American Issues and Tribal Law"},{"ES":"Estates and Wills"},{"WO":"Work and Employment Law"},{"IM":"Immigration"},{"CO":"Courts and Lawyers"},{"HE":"Health"},{"TO":"Accidents  and Torts"},{"CR":"Crime and Prisons"},{"DI":"Disaster Relief"},{"EN":"Environmental Justice"},{"MO":"Money, Debt, and Consumer Issues"},{"FA":"Family"},{"BU":"Small Business and IP"},{"HO":"Housing"},{"None":"None"}]
+---
+

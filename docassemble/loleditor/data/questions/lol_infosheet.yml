@@ -1,0 +1,95 @@
+objects:
+  - app.infosheet: DADict.using(object_type=DAObject, auto_gather=False,complete_attribute='complete')
+  - app.infosheet[i].intro_issues: DAList.using(object_type=DAObject, auto_gather=False)
+  - app.infosheet[i].options: DAList.using(object_type=DAObject, auto_gather=False)
+  - app.infosheet[i].steps: DAList.using(object_type=DAObject, auto_gather=False)
+  - app.infosheet[i].law_link: DAList.using(object_type=DAObject, auto_gather=False)
+---
+code: |
+  if not defined('collected_issues'):
+    collected_issues = list()
+  for issue in app.issues:
+    if issue.id not in collected_issues:
+      collected_issues.append(issue.id)
+      app.infosheet['main'].intro_issues.append(issue)
+  app.infosheet['main'].intro_issues.gathered = True
+  if not defined('popped_already'):
+    app.infosheet['main'].intro_issues.pop()
+    popped_already = True
+---
+code: |
+  app.infosheet['main'].option_dup_list = list()
+---
+code: |
+  for issue in app.issues:
+    if defined('issue.options'):
+      for option in issue.options:
+        if not option.a_id in app.infosheet['main'].option_dup_list:
+          app.infosheet['main'].options.append(option)
+          app.infosheet['main'].option_dup_list.append(option.a_id)
+          if defined('option.steps'):
+            for step in option.steps:
+              app.infosheet['main'].steps.append(step)
+  app.infosheet['main'].options.gathered = True
+
+---
+code: |
+  for issue in app.issues:
+    if defined('issue.steps'):
+      for step in issue.steps:
+        app.infosheet['main'].steps.append(step)
+  app.infosheet['main'].steps.gathered = True
+---
+code: |
+  for issue in app.issues:
+    if defined('issue.law_link'):
+      for step in issue.law_link:
+        app.infosheet['main'].law_link.append(step)
+  app.infosheet['main'].law_link.gathered = True
+---
+code: |
+  if hasattr(app.issues.last(),'explanation_block'):
+    explanation_block = app.issues.last().explanation_block
+---
+code: |
+  app.infosheet['main'].title = app.issues.last().heading
+  app.infosheet['main'].explanation = app.issues.last().explanation
+  app.infosheet['main'].subtitle = app.issues.last().subheading
+  app.infosheet['main'].why = app.issues.last().why
+  app.infosheet['main'].warning = app.issues.last().warning
+---
+table: app.ol_collections['steps'].table
+rows: app.ol_collections['steps']
+columns:
+  - Name: row_item.name
+  - Title: row_item.title
+  - Explanation: row_item.explanation
+allow reordering: True
+delete buttons: True
+---
+table: app.ol_collections['options'].table
+rows: app.ol_collections['options']
+columns:
+  - Name: row_item.name
+  - Title: row_item.title
+  - Explanation: row_item.explanation
+allow reordering: True
+delete buttons: True
+---
+table: app.ol_collections['law_link'].table
+rows: app.ol_collections['law_link']
+columns:
+  - Title: row_item.cite
+  - Explanation: row_item.quote
+allow reordering: True
+delete buttons: True
+---
+generic object: Thing
+question: Enter
+fields:
+  - Name: x.name.text
+  - Title: x.title
+    datatype: area
+  - Explanation: x.explanation
+    datatype: area
+---

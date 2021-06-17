@@ -1,0 +1,18 @@
+---
+question: ${ app.issues[i].name } Clone 
+subquestion: |
+  ${ app.issues[i].postclone_name }
+fields:
+  - Pick a clone: app.issues[i].postclone_a_id
+    code: |
+      app.issues[i].postclone_code
+---
+code: |
+  app.issues[i].postclone_code = list()
+  for key in app.issues[i].postclones:
+    app.issues[i].postclone_name = key
+    if key == "Stage":
+      for clone_a_id in app.issues[i].postclones[key]:
+        app.issues[i].postclone_code.append({clone_a_id:aid2Stage[get_clone_type(clone_a_id, key, "issues")]})
+  app.issues[i].postclone_code.append({"noneOfTheAbove": "None of the Above"})
+---

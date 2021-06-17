@@ -1,0 +1,25 @@
+---
+question: ${ app.issues[i].name } Clone 
+subquestion: |
+  ${ j }
+fields:
+  - Pick a clone: app.issues[i].clones[j].clone_a_id
+    code: |
+      app.issues[i].clones[j].question_code
+comment: |
+  lolq_app_issue_preclones.yml
+  This asks the user to pick the clone - the label will be the name of the clone (for TypeOfHousing, the label will be things like "Private Housing"), but the field is the a_id for the clone of this Issue.
+---
+code: |
+  app.issues[i].clone_code = list()
+  if hasattr(app.issues[i],'preclones'):
+    for key in app.issues[i].preclones:
+      app.issues[i].clone_name = key
+      if key == "TypeOfHousing":
+        for clone_a_id in app.issues[i].preclones[key]:
+          app.issues[i].clone_code.append({clone_a_id:aid2TypeOfHousing[get_clone_type(clone_a_id, key, "issues")]})
+      if key == "County":
+        for clone_a_id in app.issues[i].preclones[key]:
+          app.issues[i].clone_code.append({clone_a_id:aid2County[get_clone_type(clone_a_id, key, "issues")]})
+  app.issues[i].clone_code.append({"noneOfTheAbove": "None of the Above"})
+---

@@ -1,0 +1,129 @@
+---
+code: |
+  library[i].new_a_id
+  library[i].at_added
+  library[i].complete = True
+comment: |
+  This will call .at_added from lol_airtable.yml, which will then call .new_a_id
+---
+generic object: ChangeObject
+code: |
+  x.got_edits
+  x.update_local_library
+  x.got_objectlinks
+  undefine('library[x.index_number].review_choice','library[x.index_number].review_choice_code')
+  x.complete = True
+---
+generic object: DAObject
+code: |
+  x.objectlinks[i][j].get_aid
+  x.objectlinks[i][j].at_added
+  x.objectlinks[i][j].complete = True
+---
+code: |
+  app.ol_collections[i][j].get_aid
+  app.ol_collections[i][j].at_added
+  app.ol_collections[i][j].complete = True
+  if j + 1 == app.ol_collections[i].target_number:
+    app.ol_collections[i].has_been_gathered = True
+---
+generic object: ChangeObject
+code: |
+  for objectlink in library.complete_elements().last().objectlinks:
+    if len(library.complete_elements().last().objectlinks[objectlink]) > 0:
+      x.fields[objectlink] = list()
+		  for ol in library.complete_elements().last().objectlinks[objectlink]:
+		    if hasattr(ol,'existing_or_new'):
+		      if hasattr(ol,'new_objectlink'):
+		        additions[objectlink].there_are_any = True
+		        temp_id = "Temp" + str(tempcounter)
+		        additions[objectlink].new_item_name = temp_id
+		        for ol_field_name in ol.all_fields:
+		          additions[objectlink][temp_id].fields[ol_field_name] = getattr(ol,ol_field_name)
+		        additions[objectlink][temp_id].complete = True
+		        tempcounter +=1
+		        additions[objectlink].there_is_another = False
+		    		x.fields[objectlink].append(temp_id)
+		      else:
+		    		x.fields[objectlink].append(ol.api['id'])
+	      else:
+	        if hasattr(ol,'a_id'):
+	    		  x.fields[objectlink].append(ol.a_id)
+	        else:
+	    		  x.fields[objectlink].append(ol.api['id'])
+		    if hasattr(ol,'edited') and not hasattr(ol,'new_objectlink'):   
+		      changes[objectlink].there_are_any = True
+		      changes[objectlink].new_item_name = ol.api['id']
+		      changes[objectlink][ol.api['id']].fields = dict()
+		      for ol_field_name in ol.all_fields:
+		        changes[objectlink][ol.api['id']].fields[ol_field_name] = getattr(ol,ol_field_name)
+		      for ol_objectlink_name in ol.objectlinks_list:
+		        if len(ol.objectlinks[ol_objectlink_name]) > 0:
+		          changes[objectlink][ol.api['id']].fields[ol_objectlink_name] = getattr(ol,ol_objectlink_name)
+		      changes[objectlink][ol.api['id']].complete = True
+		      changes[objectlink].there_is_another = False
+  x.got_objectlinks = True
+---
+code: |
+  app.issues[i].starter_at_added
+  app.issues[i].preclones_complete
+  app.issues[i].subsets_complete
+  app.issues[i].postclones_complete
+  app.issues[i].sf_added
+  app.issues[i].complete = True
+comment: |
+  If there is an app.issue, it will try to make it complete, so it will go through this list.
+---
+generic object: LegalObject
+code: |
+  x.get_api
+  x.lists_added
+  x.clones_added
+  x.active_objectlinks_added
+  x.fields_from_list_added
+  x.no_more_clones
+  x.complete = True
+---
+generic object: DAObject
+code: |
+  x.facts[i].get_aid
+  x.facts[i].get_api
+  x.facts[i].lists_added
+  x.facts[i].fields_from_list_added
+  x.facts[i].complete = True
+---
+generic object: Protocol
+code: |
+  x.facts[i].get_aid
+  x.facts[i].get_api
+  x.facts[i].lists_added
+  x.facts[i].fields_from_list_added
+  x.facts[i].complete = True
+---
+generic object: DAObject
+code: |
+  library[i].objectlinks['subsets'][j].name = library[i].objectlinks['subsets'].name_list[j]
+  library[i].objectlinks['subsets'][j].a_id = library[i].objectlinks['subsets'].aid_list[j]
+  library[i].objectlinks['subsets'][j].complete = True
+---
+code: |
+  app.infosheet['main'].intro_issues.gathered
+  app.infosheet['main'].options.gathered
+  app.infosheet['main'].steps.gathered
+  app.infosheet['main'].law_link.gathered
+  app.infosheet[i].complete = True
+  app.infosheet.gathered = True
+---
+generic object: LegalObject
+code: |
+  x.allegations[i].related_element
+  x.allegations[i].complete = True
+---
+generic object: DAObject
+code: |
+  x.lists_added
+  x.objectlinks_added
+  x.clones_added
+  x.fields_from_list_added
+  x.at_added = True
+---

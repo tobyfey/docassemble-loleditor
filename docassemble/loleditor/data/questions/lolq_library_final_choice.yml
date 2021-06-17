@@ -1,0 +1,55 @@
+---
+question: Library Final Screen
+subquestion: |
+  You reviewed the following IssueObjects and/or LegalObjects:
+  
+  % for index in range(len(library)):
+    - ${ library[index].name }
+  % endfor
+  
+  % if defined('changes'):
+  You made the following changes:
+  
+  % for key in changes.keys():
+  
+  ${ key }:
+  
+  % for change in changes[key].keys():
+    - ${ changes[key][change].fields['name'] }
+  % endfor
+  % endfor
+  
+  These changes are not saved permanently.
+  
+  You can save the changes using the menu in the upper right.
+  
+  Before you do that, you can test your changes.
+  % endif
+field: library.final_choice
+buttons:
+  code: |
+    final_choices
+comment: |
+  library final_choice question in lol_questions.yml
+---
+code: |
+  final_choices = list()
+  if defined('changes'):
+    final_choices.append({'test':"Test changes"})
+    final_choices.append({'delete':"Delete changes"})
+  final_choices.append({'return':"Return"})
+---
+generic object: DAObject
+event: library_print
+question: here is a summary sheet.
+attachments:
+  filename: summary_sheet
+  content: |
+    % for field in library.complete_elements().last().all_fields:
+    ${ field }: ${ getattr(library.complete_elements().last(),field) }
+    
+    % endfor
+---
+
+  
+

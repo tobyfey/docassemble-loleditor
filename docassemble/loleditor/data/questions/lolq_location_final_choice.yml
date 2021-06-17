@@ -1,0 +1,56 @@
+---
+question: Location Final Screen
+field: location_final_choice
+subquestion: |
+
+  % if not additions['Protocols'].there_are_any:
+  Protocols added:
+  % for key, value in additions['Protocols']:
+  % for field_name, value_name in value:
+  
+  ${ field_name } : ${ value_name }
+  % endfor
+  % endfor
+  % if changes['Protocols'].there_are_any:
+  Protocols edited:
+  % endif
+  % endif
+  
+  Filters:
+  
+  ${ protocols.table }
+  
+  ${ protocols.add_action() }
+  
+  [Print filtered protocols](${url_action('protocols.summary_sheet')})
+  
+buttons:
+  - Test: test
+  - Return: return
+comment: |
+  lolq_location_final_choice.yml
+---
+generic object: ProtocolsAll
+event: x.summary_sheet
+question: Here is a summary sheet.
+attachments:
+  - name: Filtered Protocols Summary Sheet
+    filename: protocols_summary_sheet
+    content:
+      
+      ${ protocols.table }
+buttons:
+  - Ok: continue
+---
+table: protocols.table
+rows: protocols
+columns:
+  - Name: row_item.referral_name
+  - Notes: row_item.notes
+  - Facts: row_item.factslist_name
+  - Issues: |
+      "None" if not hasattr(row_item['issues'],'name_list') else row_item['issues'].name_list 
+edit:
+  - edited
+---
+  

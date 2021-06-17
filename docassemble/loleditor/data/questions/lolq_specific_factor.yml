@@ -1,0 +1,23 @@
+---
+generic object: SFDict
+question: ${ i }
+fields: 
+  - no label: x[i].new_item
+    datatype: combobox
+    code: x[i].sfql
+comment: |
+  lolq_specific_factor.yml
+  This question asks the user to pick from choices of a specific factor, for example, the question "TypeOfHousing" will ask the user to pick from "Private", "Public"
+  .specific_factors is a dictionary of sets.  Each key of the dictionary is the name of a factor needed to determine if a protocol is appropriate, like "County" or "issues".  The value is a set containing AirTable ids for records in a table with the same name as the issue, so the table in the AirTable named County or issues for the earlier examples.  The .sfql
+---
+code: |
+  app.specific_factors[i].sfql = list()
+  api_response = api_dictionary[i].get_all()
+  for choice in api_response:
+    if 'active' in choice['fields'] and choice['fields']['active']:
+      tempdict = dict()
+      tempdict[choice['id']] = choice['fields']['name']
+      if 'description' in choice['fields']:
+        tempdict['help'] =choice['fields']['description']
+      app.specific_factors[i].sfql.append(tempdict)
+---

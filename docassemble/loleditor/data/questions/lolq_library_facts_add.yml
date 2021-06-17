@@ -1,0 +1,99 @@
+---
+only sets: x.facts[i].existing_or_new
+generic object: DAObject
+if: |
+  library.complete_elements().last().review_choice == "edit"
+question: Facts
+fields:
+  - Existing or New: x.facts[i].existing_or_new
+    input type: dropdown
+    choices:
+      - Existing
+      - New
+  - Pick existing: x.facts[i].new_a_id
+    input type: combobox
+    show if:
+      variable: x.facts[i].existing_or_new
+      is: Existing
+    code: allfacts
+  - Name: x.facts[i].name
+    show if:
+      variable: x.facts[i].existing_or_new
+      is: New
+  - Definition: x.facts[i].definition
+    show if:
+      variable: x.facts[i].existing_or_new
+      is: New
+    required: false
+  - Explanation: x.facts[i].explanation
+    show if:
+      variable: x.facts[i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Question: x.facts[i].question
+    show if:
+      variable: x.facts[i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Question In List: x.facts[i].question_in_list
+    show if:
+      variable: x.facts[i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Subsets Question: x.facts[i].subsets_question
+    show if:
+      variable: x.facts[i].existing_or_new
+      is: New
+    required: false
+  - Heading: x.facts[i].heading
+    show if:
+      variable: x.facts[i].existing_or_new
+      is: New
+    required: false
+  - Subheading: x.facts[i].subheading
+    show if:
+      variable: x.facts[i].existing_or_new
+      is: New
+    required: false
+  - Warning: x.facts[i].warning
+    show if:
+      variable: x.facts[i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Why: x.facts[i].why
+    show if:
+      variable: x.facts[i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Active: x.facts[i].active
+    show if:
+      variable: x.facts[i].existing_or_new
+      is: New
+    required: false
+    datatype: yesno
+  - Most Common: x.facts[i].most_common
+    show if:
+      variable: x.facts[i].existing_or_new
+      is: New
+    required: false
+    datatype: yesno
+  - Keep checked: x.facts[i].new_objectlink
+    show if:
+      variable: x.facts[i].existing_or_new
+      is: New
+    required: True
+    datatype: yesno
+    default: True
+---
+code: |
+  all_facts = api_dictionary['facts'].get_all()
+  allfacts = list()
+  for st in all_facts:
+    if 'name' in st['fields']:
+      allfacts.append({st['id']:st['fields']['name']})
+---

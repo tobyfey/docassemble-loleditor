@@ -1,0 +1,80 @@
+---
+question: Infosheet Editor
+subquestion: |
+  This page allows you to edit and create an Infosheet.  If any legal information already exists, it may be used as a default.
+  Any legal information that you change or add can be saved to help future advocates.  You can save the legal information to the database on the page that download the infosheet.
+
+fields:
+  - Title: app.infosheet['main'].title
+    default: app.infosheet['main'].title
+    required: False  
+  - Subtitle: app.infosheet['main'].subtitle
+    default: app.infosheet['main'].subtitle
+    required: False  
+  - note: |
+  		The "Explanation Block" is the top part of the letter, under the title and subtitle, that explains the legal issue.  You may want to use any of the following information, from the current issue and all parent issues, to write this block.
+  		
+  		The Explanation Block needs to be written in Markup.
+  - Explanation Block: explanation_block
+    datatype: area
+    default: explanation_block
+  - note: |
+		  Parent issues:
+		
+			% for inis in app.infosheet['main'].intro_issues:
+			${ inis.explanation }
+			
+			
+			% endfor
+			
+			${ app.infosheet['main'].explanation }
+			
+			% if hasattr(app.infosheet['main'],'definition'):
+			
+			Definition: ${ app.infosheet['main'].definition }
+			
+			% endif
+			% if hasattr(app.infosheet['main'],'why'):
+			
+			Why: ${ app.infosheet['main'].why }
+			
+			% endif
+			% if hasattr(app.infosheet['main'],'how'):
+			
+			How: ${ app.infosheet['main'].how }
+			
+			% endif
+			% if hasattr(app.infosheet['main'],'warning'):
+			
+			**Warning:** ${ app.infosheet['main'].warning }
+			
+			% endif
+			% if hasattr(app.infosheet['main'],'requirement'):
+			
+			Requirement: ${ app.infosheet['main'].requirement }
+			
+			% endif
+			% if hasattr(app.infosheet['main'],'Translation'):
+			
+			Translation: ${ app.infosheet['main'].Translation }
+			
+			% endif
+			% if hasattr(app.infosheet['main'],'law'):
+			
+			Law: ${ app.infosheet['main'].law }
+			
+			% endif
+	- note: |
+      **Next Steps**
+      
+			${ app.ol_collections['steps'].table }
+	- note: |
+      **Options**
+      
+			${ app.ol_collections['options'].table }
+	- note: |
+      **law**
+      
+			${ app.ol_collections['law_link'].table  }
+continue button field: explanation_block_edited
+---

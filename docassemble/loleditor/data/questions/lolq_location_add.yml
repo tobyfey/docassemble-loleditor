@@ -1,0 +1,76 @@
+---
+question: Add Protocol
+fields: 
+  - Protocol Number: temp_protocol_number
+    required: True
+  - Practice Group: temp_referral_name_text
+    input type: combobox
+    code: all_Referral
+    required: True
+validation code: |
+  if temp_referral_name_text + temp_protocol_number in protocols.keys():
+    validation_error("The protocol number can not be the same as any other Protocol Number for this Practice Group")
+---
+generic object: ProtocolsAll
+code: |
+  tempname = "Temp" + temp_referral_name_text + temp_protocol_number
+  x.new_item_name = tempname
+  x[tempname].referral = temp_referral_name_text
+  x[tempname].protocol_number = temp_protocol_number
+  x[tempname].referral_name = tempname
+  for field_name in ['Jurisdiction','issues','TypeOfHousing','Stage']:
+		x[tempname].initializeObject(field_name, ProtocolFactor)
+  x[tempname].gathered = True
+  undefine('tempname','temp_referral_name_text','temp_protocol_number')
+---
+generic object: Protocol
+question: What factors would you like to add?
+fields: 
+  - Referral: x.referral
+    datatype: dropdown
+    code: |
+      all_Referral
+  - Add county factor: x['Jurisdiction'].there_are_any
+    datatype: yesno
+  - Add issues factor: x['issues'].there_are_any
+    datatype: yesno
+  - Add stage factor: x['Stage'].there_are_any
+    datatype: yesno
+  - Add Type of Housing factor: x['TypeOfHousing'].there_are_any
+    datatype: yesno
+  - Number of Facts: x.facts.target_number
+    datatype: number
+  - Notes: x.notes
+    datatype: area
+---
+code: |
+  api = api_dictionary['Referral'].get_all()
+  all_Referral = list()
+  for st in api:
+    if 'name' in st['fields']:
+      all_Referral.append({st['fields']['name']:st['fields']['name']})
+---
+generic object: Protocol
+question: Pick applicable counties
+fields:
+  - Select applicable counties: x['Jurisdiction'].selection_dict
+    datatype: checkboxes
+    code: all_counties
+---
+generic object: Protocol
+code: |
+  x['Jurisdiction'].target_number = len(x['Jurisdiction'].selection_dict.true_values())
+  for id in x['Jurisdiction'].selection_dict.true_values():
+    x['Jurisdiction'].append(id)
+---
+generic object: Protocol
+code: |
+  x['Jurisdiction'][i]= x['Jurisdiction'].selection_dict.true_values()[i]
+---
+generic object: Protocol
+code: |
+  x['Jurisdiction'].name_list = list()
+  for index in range(len(all_counties)):
+    for key in all_counties[index]:
+      if key in x['Jurisdiction'].selection_dict.true_values():
+        x['Jurisdiction'].name_list.append(all_counties[index][key])

@@ -1,0 +1,175 @@
+---
+only sets: x.objectlinks[i][j].get_aid
+generic object: DAObject
+code: |
+  if j >= len(x.objectlinks[i].aid_list):
+    if x.objectlinks[i][j].existing_or_new == "New":
+      x.objectlinks[i][j].lists_added
+      x.objectlinks[i][j].initializeAttribute('objectlinks', DADict.using(object_type=DAList.using(ask_object_type=True,ask_number=True,complete_attribute = "complete"), auto_gather = False, gathered = True))
+      for ref in x.objectlinks[i][j].objectlinks_list:
+				x.objectlinks[i][j].objectlinks.new_item = ref
+        if ref in ['related_issues','subsets']:
+				  x.objectlinks[i][j].objectlinks.new_object_type = "IssueObject"
+				elif ref in ['legalObjects']:
+				  x.objectlinks[i][j].objectlinks.new_object_type = "LegalObject"
+				elif ref == 'steps':
+				  x.objectlinks[i][j].objectlinks.new_object_type = "Step"
+				elif ref == 'options':
+				  x.objectlinks[i][j].objectlinks.new_object_type = "Option"
+				elif ref == 'law_link':
+				  x.objectlinks[i][j].objectlinks.new_object_type = "Law_Link"
+				x.objectlinks[i][j].objectlinks[ref].target_number = 0
+      x.objectlinks[i][j].active_objectlinks_added = True
+      x.objectlinks[i][j].fields_from_list_added = True
+      x.objectlinks[i][j].at_added = True
+  else:
+    x.objectlinks[i][j].new_a_id = x.objectlinks[i].aid_list[j]
+  x.objectlinks[i][j].get_aid = True
+---
+only sets: app.ol_collections[i][j].get_aid
+code: |
+  app.ol_collections[i][j].new_a_id = list(app.ol_collections[i].aid_from_dict[j].keys())[0]
+  app.ol_collections[i][j].get_aid = True
+---
+only sets: x.facts[i].get_aid
+generic object: DAObject
+code: |
+  if i >= len(x.factslist):
+    if x.facts[i].existing_or_new == "New":
+      x.facts[i].lists_added
+      x.facts[i].initializeAttribute('objectlinks', DADict.using(object_type=DAList.using(ask_object_type=True,ask_number=True,complete_attribute = "complete"), auto_gather = False, gathered = True))
+      for ref in x.facts[i].objectlinks_list:
+				x.facts[i].objectlinks.new_item = ref
+        if ref in ['related_issues','subsets']:
+				  x.facts[i].objectlinks.new_object_type = "IssueObject"
+				elif ref in ['legalObjects']:
+				  x.facts[i].objectlinks.new_object_type = "LegalObject"
+				elif ref == 'steps':
+				  x.facts[i].objectlinks.new_object_type = "Step"
+				elif ref == 'options':
+				  x.facts[i].objectlinks.new_object_type = "Option"
+				elif ref == 'law_link':
+				  x.facts[i].objectlinks.new_object_type = "Law_Link"
+				x.facts[i].objectlinks[ref].target_number = 0
+			x.facts[i].get_api = True
+			x.facts[i].id = "Temp" + str(tempcounter)
+      x.facts[i].active_objectlinks_added = True
+      x.facts[i].fields_from_list_added = True
+    else:
+      x.facts[i].id = x.facts[i].new_a_id
+  else:
+    x.facts[i].id = x.factslist[i]
+  x.facts[i].get_aid = True
+---
+code: |
+  topobject = api_dictionary['issues'].match('name', 'Top')
+  library[0].new_a_id = topobject['id']
+comment: |
+  This needs to be fixed to be able to get the airtable id for the top issue, even in a different airtable with a different id.
+---
+code: |
+  if library.complete_elements().last().review_choice == "housing_clone":
+    library[i].type_of_clone = "Type Of Housing"
+    for dict_item in library.complete_elements().last().clones['TypeOfHousing'].question_code:
+      for key in dict_item:
+        if key == library.complete_elements().last().housing_a_id:
+          library[i].name_of_clone = dict_item[key]
+          break
+    if hasattr(library.complete_elements().last(), 'parent'):
+      library[i].parent = library.complete_elements().last().parent
+    else:
+      library[i].parent = library.complete_elements().last()
+    library[i].new_a_id = library.complete_elements().last().housing_a_id
+  elif library.complete_elements().last().review_choice == "stage_clone":
+    library[i].type_of_clone = "Stage"
+    for dict_item in library.complete_elements().last().clones['Stage'].question_code:
+      for key in dict_item:
+        if key == library.complete_elements().last().stage_a_id:
+          library[i].name_of_clone = value
+          break
+    if hasattr(library.complete_elements().last(), 'parent'):
+      library[i].parent = library.complete_elements().last().parent
+    else:
+      library[i].parent = library.complete_elements().last()
+    library[i].new_a_id = library.complete_elements().last().stage_a_id
+  elif library.complete_elements().last().review_choice == "subset":
+    library[i].new_a_id = library.complete_elements().last().subset_a_id
+  elif library.complete_elements().last().review_choice == "elements":
+  	library[i].new_a_id = library.complete_elements().last().elements_a_id
+  elif library.complete_elements().last().review_choice == "legal_action":
+  	library[i].new_a_id = library.complete_elements().last().legal_action_a_id
+---
+comment: |
+  questions that set SOMETHING_a_id
+  lolq_library_review_issue.yml
+  lolq_library_review_issue_clone.yml
+---
+code: |
+  for key, value in app.ol_collections['legalObjects'].aid_from_dict[i].items():
+    app.legalObjects[i].from_issue = value
+    app.legalObjects[i].new_a_id = key
+---
+generic object: LegalObject
+code: |
+  if x.allegations_required:
+    x.legal_elements[i].allegation_description = x.allegations[i].description
+    if x.allegations[i].related_element == "Other":
+      x.legal_elements[i].a_id = "Other"
+      x.legal_elements[i].ismet = False
+    else:
+      x.legal_elements[i].new_a_id = x.allegations[i].related_element
+  else:
+  	x.legal_elements[i].new_a_id = x.objectlinks['elements'].aid_list[i]
+---
+comment: |
+  questions that set .new_a_id:
+  lolq_app_issue.yml
+  lolq_library_law_link_add.yml
+  lolq_library_legalObject_add.yml
+  lolq_library_option_add.yml
+  lolq_library_step_add.yml
+---
+generic object: LegalObject
+code: |
+  x.api = api_dictionary['legalObjects'].get(x.new_a_id)
+  x.get_api = True
+---
+code: |
+  app.legalObjects[i].a_id = app.ol_collections['legalObjects'][i]
+---
+generic object: DAObject
+code: |
+  x.facts[i].api = api_dictionary['facts'].get(x.facts[i].id)
+  x.facts[i].get_api = True
+---
+code: |
+  app.issues[i].api = api_dictionary['issues'].get(app.issues[i].new_a_id)
+  app.issues[i].get_api = True
+---
+code: |
+  x.api = api_legal.get(x.clone_legob)
+  x.get_api_clone = True
+---
+code: |
+  app.issues[i].api = api_dictionary['issues'].match('name','Top')
+  app.issues[i].get_starter_api = True
+---
+generic object: Step
+code: |
+  x.api = api_dictionary['steps'].get(x.new_a_id)
+---
+generic object: DAObject
+code: |
+  x.api = api_dictionary['issues'].get(x.new_a_id)
+---
+code: |
+  app.issues[i].api = api_dictionary['issues'].get(app.issues[i].clone_a_id)
+  app.issues[i].get_clone_api = True
+---
+comment: |
+  lolq_app_issue_preclones.yml provides x.clone_a_id
+---
+code: |
+  app.issues[i].api = api_dictionary['issues'].get(app.issues[i].clone_a_id)
+  app.issues[i].get_postclone_api = True      
+---

@@ -1,0 +1,453 @@
+---
+code: |
+  api_dictionary.there_are_any = True
+  api_dictionary[i] = get_airtable_api(i)
+  api_dictionary.there_is_another = False
+---
+generic object: IssueObject
+code: |
+  x.object_type_name = "IssueObject"
+  x.required_fields = ['name','id_calculated']
+  x.blank_doesnt_replace_fields = []
+  x.else_none_fields = []
+  x.else_empty_fields = ['question','question_in_list','subsets_question','definition','heading','subheading','explanation','why','warning','HOW']
+  x.else_false_fields = ['active','most_common']
+  x.else_attribute_fields = []
+  x.all_fields = x.required_fields + x.else_none_fields + x.else_empty_fields + x.else_false_fields + x.else_attribute_fields
+  x.preclones_list = ['TypeOfHousing','Jurisdiction']
+  x.postclones_list = ['Stage']
+  x.allclones = x.preclones_list + x.postclones_list
+  x.objectlinks_list = ['steps','options','law_link','related_issues','subsets','legalObjects']
+  x.lists_added = True
+---
+generic object: LegalObject
+code: |
+  x.object_type_name = "LegalObject"
+  x.required_fields = ['name','field','label']
+  x.blank_doesnt_replace_fields = []
+  x.else_none_fields = ['image', 'pleadingsection', 'strength', 'facts_elements_interaction']
+  x.else_empty_fields = ['default', 'question', 'explanation', 'note', 'more_help', 'requirement', 'warning', 'link', 'allegations_question', 'allegations_fit_question', 'description', 'explanationifmet', 'explanationifnotmet', 'heading', 'defensetext', 'law', 'lawversions', 'conclusion']
+  x.else_false_fields = ['active', 'allegations_required']
+  x.else_attribute_fields = []
+  x.fact_fields = ['label','explanation','question','html','htmltext','htmllink','fact_formula']
+  x.all_fields = x.required_fields + x.else_none_fields + x.else_empty_fields + x.else_false_fields + x.else_attribute_fields + x.fact_fields
+  x.cloneslist = ['TypeOfHousing','Jurisdiction','Stage']
+  x.allclones = x.cloneslist
+  x.objectlinks_list = ['elements','steps','options','law_link','related_issues','legalObjects']
+  x.lists_added = True
+---
+generic object: Step
+code: |
+  x.object_type_name = "Step"
+  x.required_fields = ['name']
+  x.blank_doesnt_replace_fields = []
+  x.else_none_fields = []
+  x.else_empty_fields = ['title','explanation','more_help','requirement','warning','link']
+  x.else_false_fields = []
+  x.else_attribute_fields = []
+  x.all_fields = x.required_fields + x.else_none_fields + x.else_empty_fields + x.else_false_fields + x.else_attribute_fields
+  x.preclones_list =[]
+  x.postclones_list = []
+  x.allclones = x.preclones_list + x.postclones_list
+  x.objectlinks_list = ['options']
+  x.lists_added = True
+---
+generic object: Option
+code: |
+  x.object_type_name = "Option"
+  x.required_fields = ['name']
+  x.blank_doesnt_replace_fields = []
+  x.else_none_fields = ['order_number']
+  x.else_empty_fields = ['title','explanation','more_help','requirement','warning','link']
+  x.else_false_fields = ['active']
+  x.else_attribute_fields = []
+  x.all_fields = x.required_fields + x.else_none_fields + x.else_empty_fields + x.else_false_fields + x.else_attribute_fields
+  x.preclones_list =[]
+  x.postclones_list = []
+  x.allclones = x.preclones_list + x.postclones_list
+  x.objectlinks_list = ['steps']
+  x.lists_added = True
+---
+generic object: Law_Link
+code: |
+  x.object_type_name = "Law_Link"
+  x.required_fields = ['cite']
+  x.blank_doesnt_replace_fields = []
+  x.else_none_fields = []
+  x.else_empty_fields = ['quote','summary','fact_description','Title','link']
+  x.else_false_fields = ['active']
+  x.else_attribute_fields = []
+  x.all_fields = x.required_fields + x.else_none_fields + x.else_empty_fields + x.else_false_fields + x.else_attribute_fields
+  x.preclones_list =['TypeOfHousing','Jurisdiction']
+  x.postclones_list = []
+  x.allclones = x.preclones_list + x.postclones_list
+  x.objectlinks_list = []
+  x.lists_added = True
+---
+generic object: FactObject
+code: |
+  x.object_type_name = "FactObject"
+  x.required_fields = ['field','label']
+  x.blank_doesnt_replace_fields = []
+  x.else_none_fields = ['factorder']
+  x.else_empty_fields = ['datatype','question','choices','prefact','default','postfact','hint','help','html','note','evlabel','evexplanation','evhint','evquestion','typeofevidence','typedofevidencedefault']
+  x.else_false_fields = ['active','not_required']
+  x.else_attribute_fields = []
+  x.all_fields = x.required_fields + x.else_none_fields + x.else_empty_fields + x.else_false_fields + x.else_attribute_fields
+  x.preclones_list =[]
+  x.postclones_list = []
+  x.allclones = x.preclones_list + x.postclones_list
+  x.objectlinks_list = []
+  x.lists_added = True
+---
+generic object: DAObject
+code: |
+  x.required_fields = []
+  x.blank_doesnt_replace_fields = ['label','question','choices','prefact','default','postfact','hint','help','html','note','evlabel','evexplanation','evhint','evquestion','typeofevidence','typedofevidencedefault','datatype','factorder','field','quote','summary','fact_description','Title','link','title','explanation','more_help','requirement','warning','cite', 'allegations_question', 'allegations_fit_question', 'description', 'explanationifmet', 'explanationifnotmet', 'heading', 'defensetext', 'law', 'lawversions', 'conclusion','image', 'pleadingsection', 'strength', 'facts_elements_interaction','question_in_list','subsets_question','definition','subheading','why','HOW']
+  x.else_none_fields = []
+  x.else_empty_fields = []
+  x.else_false_fields = ['active','most_common']
+  x.else_attribute_fields = []
+  x.all_fields = x.required_fields + x.else_none_fields + x.else_empty_fields + x.else_false_fields + x.else_attribute_fields
+  x.preclones_list = ['TypeOfHousing','Jurisdiction']
+  x.postclones_list = ['Stage']
+  x.allclones = x.preclones_list + x.postclones_list
+  x.objectlinks_list = ['steps','options','law_link','related_issues','subsets','legalObjects','elements']
+  x.clone_lists_added = True
+---
+generic object: DAObject
+code: |
+	x.initializeAttribute('clones', DADict.using(object_type=DAList.using(ask_object_type=True,ask_number=True,complete_attribute = "complete"), auto_gather = False, gathered = True))
+  x.clones.preclone_counter = 0
+  x.clones.postclone_counter = 0
+	for field_name in x.allclones:
+	  x.clones[field_name].clear()
+	  undefine('x.clones[field_name].gathered', 'x.subset_added')
+	  x.clones[field_name].aid_list = dict()
+	  x.clones[field_name].name_list = dict()
+	  airtable_name = "clones_" + field_name
+	  name_list_string = airtable_name + "_name"
+	  x.clones[field_name].question_code = list()
+	  if field_name in x.preclones_list:
+      x.clones[field_name].is_preclone = True
+    elif field_name in x.postclones_list:
+      x.clones[field_name].is_preclone = False
+    else:
+      x.clones[field_name].is_preclone = None
+    if airtable_name in x.api['fields'] and len(x.api['fields'][airtable_name]) > 0:
+      x.clones[field_name].aid_list = x.api['fields'][airtable_name]
+      x.clones[field_name].name_list = x.api['fields'][name_list_string]
+      x.clones[field_name].target_number = len(x.clones[field_name].aid_list)
+		  for index in range(len(x.api['fields'][airtable_name])):
+		    x.clones[field_name].question_code.append({x.api['fields'][airtable_name][index]:x.api['fields'][name_list_string][index]})
+		  if x.clones[field_name].is_preclone:
+		    x.clones.preclone_counter += 1
+		  elif x.clones[field_name].is_preclone == False:
+		    x.clones.postclone_counter += 1
+    else:
+      x.clones[field_name].target_number = 0
+    x.clones[field_name].question_code.append({"noneOfTheAbove":"None of the Above"})
+  if x.clones.preclone_counter > 0:
+    x.has_preclones = True
+  else:
+    x.has_preclones = False
+  if x.clones.postclone_counter > 0:
+    x.has_postclones = True
+  else:
+    x.has_postclones = False
+  if x.clones.preclone_counter > 0 or x.clones.postclone_counter > 0:
+    x.has_clones = True
+  else:
+    x.has_clones = False
+	x.initializeAttribute('cloned', DADict.using(auto_gather=False,gathered=True))
+	for field_name in x.allclones:
+		clones_string = "cloned_" + field_name
+		if clones_string in x.api['fields']:
+		  x.cloned[field_name] = x.api['fields'][clones_string]
+		else:
+		  x.cloned[field_name] = list()
+  x.clones_added = True
+---
+generic object: DAObject
+code: |
+  x.initializeAttribute('objectlinks', DADict.using(object_type=DAList.using(ask_object_type=True,ask_number=True,complete_attribute = "complete"), auto_gather = False, gathered = True))
+	for objectlink_field_name in x.objectlinks_list:
+	  x.objectlinks[objectlink_field_name].clear()
+	  undefine('x.objectlinks[objectlink_field_name].gathered', 'x.subset_added')
+	  x.objectlinks[objectlink_field_name].aid_list = dict()
+	  x.objectlinks[objectlink_field_name].name_list = dict()
+	  name_list_string = objectlink_field_name + "_name"
+	  x.objectlinks[objectlink_field_name].question_code = list()
+    if objectlink_field_name in x.api['fields'] and len(x.api['fields'][objectlink_field_name]) > 0:
+      x.objectlinks[objectlink_field_name].aid_list = x.api['fields'][objectlink_field_name]
+      x.objectlinks[objectlink_field_name].name_list = x.api['fields'][name_list_string]
+      x.objectlinks[objectlink_field_name].target_number = len(x.objectlinks[objectlink_field_name].aid_list)
+		  for index in range(len(x.api['fields'][objectlink_field_name])):
+		    x.objectlinks[objectlink_field_name].question_code.append({x.api['fields'][objectlink_field_name][index]:x.api['fields'][name_list_string][index]})
+    else:
+      x.objectlinks[objectlink_field_name].target_number = 0
+    x.objectlinks[objectlink_field_name].question_code.append({"noneOfTheAbove":"None of the Above"})
+  x.objectlinks_added = True
+---
+generic object: DAObject
+code: |
+	x.initializeAttribute('clones', DADict.using(object_type=DAList.using(ask_object_type=True,ask_number=True,complete_attribute = "complete"), auto_gather = False, gathered = True))
+	for field_name in x.allclones:
+		airtable_name = "clones_" + field_name
+		if hasattr(x,'clone_name') and x.clone_name == field_name:
+		  x.clones[field_name].clear()
+		  x.clones[field_name].aid_list = list()
+		  x.clones[field_name].name_list = list() 
+		  x.clones[field_name].target_number = 0
+    elif airtable_name in x.api['fields'] and len(x.api['fields'][airtable_name]) > 0:
+			x.clones[field_name].clear()
+			undefine('x.clones[field_name].gathered', 'x.subset_added')
+			name_list_string = airtable_name + "_name"
+			x.clones[field_name].question_code = list()
+			if field_name in x.preclones_list:
+		    x.clones[field_name].is_preclone = True
+			elif field_name in x.postclones_list:
+		    x.clones[field_name].is_preclone = False
+			else:
+		    x.clones[field_name].is_preclone = None
+      x.clones[field_name].aid_list = x.api['fields'][airtable_name]
+      x.clones[field_name].name_list = x.api['fields'][name_list_string]
+      x.clones[field_name].target_number = len(x.clones[field_name].aid_list)
+		  for index in range(len(x.api['fields'][airtable_name])):
+		    x.clones[field_name].question_code.append({x.api['fields'][airtable_name][index]:x.api['fields'][name_list_string][index]})
+    	x.clones[field_name].question_code.append({"noneOfTheAbove":"None of the Above"})
+  x.clones.preclone_counter = 0
+  x.clones.postclone_counter = 0
+  for field_name_key in x.clones.keys():
+    if len(x.clones[field_name_key].aid_list) > 0:
+			if x.clones[field_name_key].is_preclone:
+		    x.clones.preclone_counter += 1
+			elif x.clones[field_name_key].is_preclone == False:
+		    x.clones.postclone_counter += 1     
+  if x.clones.preclone_counter > 0:
+    x.has_preclones = True
+  else:
+    x.has_preclones = False
+  if x.clones.postclone_counter > 0:
+    x.has_postclones = True
+  else:
+    x.has_postclones = False
+  if x.clones.preclone_counter > 0 or x.clones.postclone_counter > 0:
+    x.has_clones = True
+  else:
+    x.has_clones = False
+	x.initializeAttribute('cloned', DADict.using(auto_gather=False,gathered=True))
+	for field_name in x.allclones:
+		clones_string = "cloned_" + field_name
+		if clones_string in x.api['fields']:
+		  x.cloned[field_name] = x.api['fields'][clones_string]
+  x.initializeAttribute('objectlinks', DADict.using(object_type=DAList.using(ask_object_type=True,ask_number=True,complete_attribute = "complete"), auto_gather = False, gathered = True))
+	for objectlink_field_name in x.objectlinks_list:
+    if objectlink_field_name in x.api['fields'] and len(x.api['fields'][objectlink_field_name]) > 0:
+			x.objectlinks[objectlink_field_name].clear()
+			undefine('x.objectlinks[objectlink_field_name].gathered', 'x.subset_added')
+			x.objectlinks[objectlink_field_name].aid_list = dict()
+			x.objectlinks[objectlink_field_name].name_list = dict()
+			name_list_string = objectlink_field_name + "_name"
+			x.objectlinks[objectlink_field_name].question_code = list()
+      x.objectlinks[objectlink_field_name].aid_list = x.api['fields'][objectlink_field_name]
+      x.objectlinks[objectlink_field_name].name_list = x.api['fields'][name_list_string]
+      x.objectlinks[objectlink_field_name].target_number = len(x.objectlinks[objectlink_field_name].aid_list)
+		  for index in range(len(x.api['fields'][objectlink_field_name])):
+		    x.objectlinks[objectlink_field_name].question_code.append({x.api['fields'][objectlink_field_name][index]:x.api['fields'][name_list_string][index]})
+      x.objectlinks[objectlink_field_name].question_code.append({"noneOfTheAbove":"None of the Above"})
+  x.clone_objectlinks_added = True
+---
+generic object: DAList
+code: |
+  x.question_code = list()
+  for obj in x:
+    x.question_code.append({obj.id:obj.name})
+  x.question_code.append({"noneOfTheAbove":"None of the Above"})
+    
+
+---
+generic object: DAObject
+code: |
+  if i in ['related_issues','subsets']:
+    x.objectlinks[i].new_object_type = IssueObject
+  elif i in ['legalObjects','elements']:
+    x.objectlinks[i].new_object_type = LegalObject
+  elif i == 'steps':
+    x.objectlinks[i].new_object_type = Step
+  elif i == 'options':
+    x.objectlinks[i].new_object_type = Option
+  elif i == 'law_link':
+    x.objectlinks[i].new_object_type = Law_Link
+---
+generic object: LegalObject
+code: |
+	x.initializeAttribute('clones', DADict.using(object_type=DAList.using(ask_object_type=True,ask_number=True,complete_attribute = "complete"), auto_gather = False, gathered = True))
+  x.clones.clone_counter = 0
+	for field_name in x.allclones:
+	  x.clones[field_name].clear()
+	  undefine('x.clones[field_name].gathered', 'x.subset_added')
+	  x.clones[field_name].aid_list = dict()
+	  x.clones[field_name].name_list = dict()
+	  airtable_name = "clones_" + field_name
+	  name_list_string = airtable_name + "_name"
+	  x.clones[field_name].question_code = list()
+    if airtable_name in x.api['fields'] and len(x.api['fields'][airtable_name]) > 0:
+      x.clones[field_name].aid_list = x.api['fields'][airtable_name]
+      x.clones[field_name].name_list = x.api['fields'][name_list_string]
+      x.clones[field_name].target_number = len(x.clones[field_name].aid_list)
+		  for index in range(len(x.api['fields'][airtable_name])):
+		    x.clones[field_name].question_code.append({x.api['fields'][airtable_name][index]:x.api['fields'][name_list_string][index]})
+			x.clones.clone_counter += 1
+    else:
+      x.clones[field_name].target_number = 0
+    x.clones[field_name].question_code.append({"noneOfTheAbove":"None of the Above"})
+  if x.clones.clone_counter > 0:
+    x.has_clones = True
+  else:
+    x.has_clones = False
+	x.initializeAttribute('cloned', DADict.using(auto_gather=False,gathered=True))
+	for field_name in x.allclones:
+		clones_string = "cloned_" + field_name
+		if clones_string in x.api['fields']:
+		  x.cloned[field_name] = x.api['fields'][clones_string]
+		else:
+		  x.cloned[field_name] = list()
+  x.initializeAttribute('facts', FactObjectList.using(object_type=FactObject,ask_number=True,complete_attribute="complete"))
+	if 'facts' in x.api['fields']:
+	  x.factslist = x.api['fields']['facts']
+	  x.facts.target_number = len(x.factslist)
+	  x.factslist_name = x.api['fields']['facts_name']
+	else:
+	  x.facts.target_number = 0
+	  x.factslist_name = list()
+	for field_name in x.fact_fields:
+	  fol_field_name = "fol_" + field_name
+	  if fol_field_name in x.api['fields']:
+	    setattr(x.facts, field_name, x.api['fields'][fol_field_name])
+    else:
+      setattr(x.facts, field_name, "")
+	x.clones_added = True
+---
+generic object: LegalObject
+code: |
+  x.initializeAttribute('objectlinks', DADict.using(object_type=DAList.using(ask_object_type=True,ask_number=True,complete_attribute = "complete"), auto_gather = False, gathered = True))
+	for objectlink_field_name in x.objectlinks_list:
+	  x.objectlinks[objectlink_field_name].clear()
+	  undefine('x.objectlinks[objectlink_field_name].gathered', 'x.subset_added')
+	  x.objectlinks[objectlink_field_name].aid_list = dict()
+	  x.objectlinks[objectlink_field_name].name_list = dict()
+	  name_list_string = objectlink_field_name + "_name"
+	  x.objectlinks[objectlink_field_name].question_code = list()
+    if objectlink_field_name in x.api['fields'] and len(x.api['fields'][objectlink_field_name]) > 0:
+      x.objectlinks[objectlink_field_name].aid_list = x.api['fields'][objectlink_field_name]
+      x.objectlinks[objectlink_field_name].name_list = x.api['fields'][name_list_string]
+      x.objectlinks[objectlink_field_name].target_number = len(x.objectlinks[objectlink_field_name].aid_list)
+		  for index in range(len(x.api['fields'][objectlink_field_name])):
+		    x.objectlinks[objectlink_field_name].question_code.append({x.api['fields'][objectlink_field_name][index]:x.api['fields'][name_list_string][index]})
+    else:
+      x.objectlinks[objectlink_field_name].target_number = 0
+    x.objectlinks[objectlink_field_name].question_code.append({"noneOfTheAbove":"None of the Above"})
+  x.objectlinks_added = True
+comment: |
+  does 'facts' just repeat what the reference fields does?  could I get rid of that and just keep the fact_fields part?
+---
+---
+generic object: LegalObject
+code: |
+  x.initializeAttribute('objectlinks', DADict.using(object_type=DAList.using(ask_object_type=True,ask_number=True,complete_attribute = "complete"), auto_gather = False, gathered = True))
+	for objectlink_field_name in x.objectlinks_list:
+	  x.objectlinks[objectlink_field_name].clear()
+	  undefine('x.objectlinks[objectlink_field_name].gathered', 'x.subset_added')
+	  x.objectlinks[objectlink_field_name].aid_list = dict()
+	  x.objectlinks[objectlink_field_name].name_list = dict()
+	  active_aid_list_string = objectlink_field_name + "_active"
+	  active_name_list_string = objectlink_field_name + "_active_name"
+	  x.objectlinks[objectlink_field_name].question_code = list()
+    if active_aid_list_string in x.api['fields'] and len(x.api['fields'][active_aid_list_string]) > 0:
+      x.objectlinks[objectlink_field_name].aid_list = x.api['fields'][active_aid_list_string]
+      x.objectlinks[objectlink_field_name].name_list = x.api['fields'][active_name_list_string]
+      x.objectlinks[objectlink_field_name].target_number = len(x.objectlinks[objectlink_field_name].aid_list)
+		  for index in range(len(x.api['fields'][active_aid_list_string])):
+		    x.objectlinks[objectlink_field_name].question_code.append({x.api['fields'][active_aid_list_string][index]:x.api['fields'][active_name_list_string][index]})
+    else:
+      x.objectlinks[objectlink_field_name].target_number = 0
+    x.objectlinks[objectlink_field_name].question_code.append({"noneOfTheAbove":"None of the Above"})
+  x.active_objectlinks_added = True
+comment: |
+  does 'facts' just repeat what the reference fields does?  could I get rid of that and just keep the fact_fields part?
+---
+code: |
+  app.ol_collections.new('steps','options','law_link','related_issues','legalObjects')
+  app.ol_collections['steps'].target_number = 0 
+  app.ol_collections['options'].target_number = 0 
+  app.ol_collections['law_link'].target_number = 0 
+  app.ol_collections['related_issues'].target_number = 0 
+  app.ol_collections['legalObjects'].target_number = 0 
+  app.ol_collections['steps'].aid_from_dict = list() 
+  app.ol_collections['options'].aid_from_dict = list() 
+  app.ol_collections['law_link'].aid_from_dict = list() 
+  app.ol_collections['related_issues'].aid_from_dict = list() 
+  app.ol_collections['legalObjects'].aid_from_dict = list() 
+  app.ol_collections.gathered = True
+---
+code: |
+  app.ol_collections['steps'].new_object_type = Step
+  app.ol_collections['options'].new_object_type = Option
+  app.ol_collections['law_link'].new_object_type = Law_Link
+  app.ol_collections['related_issues'].new_object_type = IssueObject
+  app.ol_collections['legalObjects'].new_object_type = LegalObject
+---
+generic object: DAObject
+code: |
+  for ol in ['steps','options','law_link','related_issues','legalObjects']:
+    if len(x.objectlinks[ol].aid_list) > 0:
+      app.ol_collections[ol].target_number += len(x.objectlinks[ol].aid_list)
+      for index in range(len(x.objectlinks[ol].aid_list)):
+        app.ol_collections[ol].aid_from_dict.append({x.objectlinks[ol].aid_list[index]:x.id})    
+  x.objectlinks_collected = True
+---
+generic object: DAObject
+code: |
+  x.question_code = dict()
+---
+generic object: DAObject
+code: |
+  x.question_code[i] = list()
+  for obj in x.objectlinks[i]:
+    x.question_code.append({x.name:x.api['id']})
+  x.question_code.append({"noneOfTheAbove":"None of the Above"})
+---
+generic object: DAObject
+code: |
+  x.id = x.api['id']
+	for field_name in x.required_fields:
+		setattr(x, field_name, x.api['fields'][field_name])
+	for field_name in x.blank_doesnt_replace_fields:
+		if field_name in x.api['fields']:
+		  setattr(x, field_name, x.api['fields'][field_name])
+	for field_name in x.else_none_fields:
+		if field_name in x.api['fields']:
+		  setattr(x, field_name, x.api['fields'][field_name])
+		else:
+		  setattr(x, field_name, None)
+	for field_name in x.else_empty_fields:
+		if field_name in x.api['fields']:
+		  setattr(x, field_name, x.api['fields'][field_name])
+		else:
+		  setattr(x, field_name, "")
+	for field_name in x.else_false_fields:
+		if field_name in x.api['fields']:
+		  setattr(x, field_name, x.api['fields'][field_name])
+		else:
+		  setattr(x, field_name, False)
+	for field_name in x.else_attribute_fields:
+		no_field_name = "no_" + field_name
+		if field_name in x.api['fields']:
+		  setattr(x, field_name, x.api['fields'][field_name])
+		  setattr(x, no_field_name, False)
+		else:
+		  setattr(x, no_field_name, True)
+  x.fields_from_list_added = True
+---
+

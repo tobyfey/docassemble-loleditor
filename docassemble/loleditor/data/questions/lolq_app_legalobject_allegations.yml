@@ -1,0 +1,25 @@
+---
+generic object: LegalObject
+question: |
+  ${ x.allegations_question }
+fields:
+  - Description in complaint/notice: x.allegations[i].description
+    required: False
+  - ${ x.allegations_question }: x.allegations[i].related_element
+    datatype: dropdown
+    code: |
+      x.objectlinks['elements'].question_code
+list collect: True
+comment: |
+  lolq_app_legalobject_allegations.yml
+  I should move the allegations stuff together.
+---
+generic object: LegalObject
+code: |
+  x.allegations_elements_qc = list()
+  for legob in x.elementslist:
+    x.allegations_elements_qc.append({legob:aid2legalObjects[legob]})
+  x.allegations_elements_qc.append({'Other':'Other'})
+comment: |
+  This is the code for the allegations question, adding each of the element's sub-elements as chocies.
+---

@@ -1,0 +1,163 @@
+---
+question:  Edit Issue - ${ library.complete_elements().last().name }
+fields:
+  - Name: changes['issues'][i].fields['name']
+    default: ${ library.complete_elements().last().name }
+    datatype: text
+    required: False
+  - Active: changes['issues'][i].fields['active']
+    default: ${ library.complete_elements().last().active }
+    datatype: yesno
+    required: False
+  - Definition: changes['issues'][i].fields['definition']
+    default: ${ library.complete_elements().last().definition }
+    datatype: area
+    required: False
+  - Explanation: changes['issues'][i].fields['explanation']
+    default: ${ library.complete_elements().last().explanation }
+    datatype: area
+    required: False
+  - Question: changes['issues'][i].fields['question']
+    default: ${ library.complete_elements().last().question }
+    datatype: text
+    required: False
+  - Question In List: changes['issues'][i].fields['question_in_list']
+    default: ${ library.complete_elements().last().question_in_list }
+    datatype: text
+    required: False
+  - Heading: changes['issues'][i].fields['heading']
+    default: ${ library.complete_elements().last().heading }
+    datatype: text
+    required: False
+  - Subheading: changes['issues'][i].fields['subheading']
+    default: ${ library.complete_elements().last().subheading }
+    datatype: text
+    required: False
+  - Warning: changes['issues'][i].fields['warning']
+    default: ${ library.complete_elements().last().warning }
+    datatype: area
+    required: False
+  - Why: changes['issues'][i].fields['why']
+    default: ${ library.complete_elements().last().why }
+    datatype: area
+    required: False
+  - Most Common: changes['issues'][i].fields['most_common']
+    default: ${ library.complete_elements().last().most_common }
+    datatype: yesno
+    required: False
+  - Subsets Question: changes['issues'][i].fields['subsets_question']
+    default: ${ library.complete_elements().last().subsets_question }
+    datatype: text
+    required: False
+  - note: |
+      **Subsets**
+      
+			${ library.complete_elements().last().objectlinks['subsets'].table }
+			
+			${ library.complete_elements().last().objectlinks['subsets'].add_action() }
+  - note: |
+      **LegalObjects**
+      
+			${ library.complete_elements().last().objectlinks['legalObjects'].table }
+			
+			${ library.complete_elements().last().objectlinks['legalObjects'].add_action() }
+  - note: |
+      **Next Steps**
+      
+			${ library.complete_elements().last().objectlinks['steps'].table }
+			
+			${ library.complete_elements().last().objectlinks['steps'].add_action() }
+  - note: |
+      **Options**
+      
+			${ library.complete_elements().last().objectlinks['options'].table }
+			
+			${ library.complete_elements().last().objectlinks['options'].add_action() }
+  - note: |
+      **Laws**
+      
+			${ library.complete_elements().last().objectlinks['law_link'].table }
+			
+			${ library.complete_elements().last().objectlinks['law_link'].add_action() }
+  - note: |
+      **Related Issues**
+      
+			${ library.complete_elements().last().objectlinks['related_issues'].table }
+			
+			${ library.complete_elements().last().objectlinks['related_issues'].add_action() }
+      
+continue button field: changes['issues'][i].edit_input_issue
+---
+generic object: DAObject
+table: x.objectlinks['subsets'].table
+rows: x.objectlinks['subsets']
+columns:
+  - Name: row_item.name
+allow reordering: False
+delete buttons: False
+---
+generic object: DAObject
+table: x.objectlinks['legalObjects'].table
+rows: x.objectlinks['legalObjects']
+columns:
+  - Name: row_item.name
+allow reordering: False
+delete buttons: False
+---
+generic object: DAObject
+table: x.objectlinks['steps'].table
+rows: x.objectlinks['steps']
+columns:
+  - Title: row_item.title
+  - Explanation: row_item.explanation
+  - More Help: row_item.more_help
+  - Requirement: row_item.requirement
+  - Warning: row_item.warning
+  - Link: row_item.link
+edit:
+	- name
+	- title
+	- explanation
+	- more_help
+	- requirement
+	- warning
+	- link
+allow reordering: False
+delete buttons: False
+---
+generic object: DAObject
+table: x.objectlinks['options'].table
+rows: x.objectlinks['options']
+columns:
+  - Title: row_item.title
+  - Explanation: row_item.explanation
+edit:
+	- title
+	- explanation
+allow reordering: False
+delete buttons: False
+---
+generic object: DAObject
+table: x.objectlinks['law_link'].table
+rows: x.objectlinks['law_link']
+columns:
+  - Cite: row_item.cite
+  - Quote: row_item.quote
+  - Summary: row_item.summary
+  - Link: row_item.link
+edit:
+	- cite
+	- quote
+	- summary
+	- link
+allow reordering: False
+delete buttons: False
+---
+generic object: DAObject
+table: x.objectlinks['related_issues'].table
+rows: x.objectlinks['related_issues']
+columns:
+  - Name: row_item.name
+allow reordering: False
+delete buttons: False
+---

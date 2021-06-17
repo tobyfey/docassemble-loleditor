@@ -1,0 +1,80 @@
+---
+event: update_airtable
+question: Update the Airtable
+subquestion: |
+  Additions
+  
+  % for table_name in ['issues','legalObjects','law','facts','options','steps']:
+  % if additions[table_name].there_are_any:
+  
+  ${ table_name }
+  
+  % for obj in additions[table_name]:
+   - ${ obj }
+   
+  % endfor
+  % endif
+  % endfor
+  
+  Changes
+  
+  % for table_name in ['issues','legalObjects','law','facts','options','steps']:
+  % if changes[table_name].there_are_any:
+  
+   - ${ table_name }
+  
+  % for obj in changes[table_name]:
+     - ${ obj }
+   
+  % endfor
+  % endif
+  % endfor
+  
+  [Click Here to Save to Airtable](${ url_action('send_airtable_update') })
+  
+continue button field: airtable_updated
+---
+event: send_airtable_update
+code: |
+  for table_name in ['issues','legalObjects','law_link','facts','options','steps']:
+    if additions[table_name].there_are_any:
+      airtable = get_airtable_api(table_name)
+      for key in additions[table_name]:
+        update_dict = dict()
+        for field_name in additions[table_name][key].fields.keys():
+          if field_name in ['steps','options','law_link','related_issues','subsets','legalObjects']:
+            temp_list = list()
+            for id in additions[table_name][key].fields[field_name]:
+              if id[:4] == "Temp":
+                temp_list.append(a_id_substitution[id])
+              else:
+                temp_list.append(id)
+            update_dict[field_name] = temp_list
+          elif field_name in getattr(all_fields,table_name):
+            update_dict[field_name] = additions[table_name][key].fields[field_name]
+        update_dict['temp_id'] = key
+        airtable.insert(update_dict)
+        if not defined('a_id_substitution'):
+          a_id_substitution = dict()
+        temprecord = airtable.match('temp_id', key)
+        a_id_substitution[key] = temprecord['id']
+  for table_name in ['issues','legalObjects','law','facts','options','steps']:
+    if changes[table_name].there_are_any:
+      airtable = get_airtable_api(table_name)
+      for key in changes[table_name]:
+        update_dict = dict()
+        for field_name in changes[table_name][key].fields.keys():
+          if field_name in ['steps','options','law_link','related_issues','subsets','legalObjects']:
+            temp_list = list()
+            for id in changes[table_name][key].fields[field_name]:
+              if id[:4] == "Temp":
+                temp_list.append(a_id_substitution[id])
+              else:
+                temp_list.append(id)
+            update_dict[field_name] = temp_list
+          elif field_name in getattr(all_fields,table_name):
+            update_dict[field_name] = changes[table_name][key].fields[field_name]
+        airtable.update(key, update_dict)
+      undefine('changes[table_name]')
+comment: |
+  Need to figure out how to get the airtable id of newly added objects, and then substitute it (for what exactly?) in editied lists of steps.

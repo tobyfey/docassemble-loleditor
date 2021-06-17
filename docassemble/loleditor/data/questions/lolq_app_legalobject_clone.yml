@@ -1,0 +1,21 @@
+---
+generic object: LegalObject
+question: ${ x.clone_name }
+field: x.clone_legob
+choices:
+  code: |
+    x.clone_qc
+---
+generic object: LegalObject
+code: |
+  x.clone_qc = list()
+  for key, value in x.clones.items():
+    x.clone_name = key
+    for clone_lo_id in value:
+      x.clone_qc.append({clone_lo_id: aid2TypeOfHousing[get_clone_type(clone_lo_id,key,'legalObjects')]})
+    break
+  x.clone_qc.append({'None':"None of the above"})
+comment: |
+  lolq_app_legalobject_clone.yml
+  This will make a clone code for housing, but nothing else?  So housing is the only preclone that works right now?
+---

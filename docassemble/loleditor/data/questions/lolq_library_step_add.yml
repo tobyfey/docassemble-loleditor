@@ -1,0 +1,71 @@
+---
+only sets: x.objectlinks['steps'][i].existing_or_new
+generic object: DAObject
+question: Next Steps
+fields:
+  - Existing or New: x.objectlinks['steps'][i].existing_or_new
+    input type: dropdown
+    choices:
+      - Existing
+      - New
+  - Pick existing step: x.objectlinks['steps'][i].new_a_id
+    input type: combobox
+    show if:
+      variable: x.objectlinks['steps'][i].existing_or_new
+      is: Existing
+    code: allsteps
+  - Name: x.objectlinks['steps'][i].name
+    show if:
+      variable: x.objectlinks['steps'][i].existing_or_new
+      is: New
+  - Title: x.objectlinks['steps'][i].title
+    show if:
+      variable: x.objectlinks['steps'][i].existing_or_new
+      is: New
+    required: false
+  - Explanation: x.objectlinks['steps'][i].explanation
+    show if:
+      variable: x.objectlinks['steps'][i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - More Help: x.objectlinks['steps'][i].more_help
+    show if:
+      variable: x.objectlinks['steps'][i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Requirement: x.objectlinks['steps'][i].requirement
+    show if:
+      variable: x.objectlinks['steps'][i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Warning: x.objectlinks['steps'][i].warning
+    show if:
+      variable: x.objectlinks['steps'][i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Link: x.objectlinks['steps'][i].link
+    show if:
+      variable: x.objectlinks['steps'][i].existing_or_new
+      is: New
+    required: false
+    input type: area
+  - Keep checked: x.objectlinks['steps'][i].new_objectlink
+    show if:
+      variable: x.objectlinks['steps'][i].existing_or_new
+      is: New
+    required: True
+    datatype: yesno
+    default: True
+---
+code: |
+  all_steps = api_dictionary['steps'].get_all()
+  allsteps = list()
+  for st in all_steps:
+    if 'title' in st['fields']:
+      allsteps.append({st['id']:st['fields']['title']})
+---
+

@@ -1,0 +1,136 @@
+---
+question:  Edit IssueObject - ${ library.complete_elements().last().name }
+subquestion: |
+  This is an clone Issue Object.
+  
+  ${ library.complete_elements().last().type_of_clone }:  ${ library.complete_elements().last().name_of_clone }
+fields:
+  - Name: changes['issues'][i].fields['name']
+    default: ${ library.complete_elements().last().name }
+    datatype: text
+    required: False
+  - Active: changes['issues'][i].fields['active']
+    default: library.complete_elements().last().active }
+    datatype: yesno
+    required: False
+  - Definition: changes['issues'][i].fields['definition']
+    default: ${ library.complete_elements().last().definition }
+    datatype: area
+    required: False
+  - note: |
+      Cloned Definition: ${ library.complete_elements().last().parent.definition }
+  - Explanation: changes['issues'][i].fields['explanation']
+    default: ${ library.complete_elements().last().explanation }
+    datatype: area
+    required: False
+  - note: |
+      Cloned Explanation: ${ library.complete_elements().last().parent.explanation }
+  - Question: changes['issues'][i].fields['question']
+    default: ${ library.complete_elements().last().question }
+    datatype: text
+    required: False
+  - note: |
+      Cloned Question: ${ library.complete_elements().last().parent.question }
+  - Question In List: changes['issues'][i].fields['question_in_list']
+    default: ${ library.complete_elements().last().question_in_list }
+    datatype: text
+    required: False
+  - note: |
+      Cloned Question In List: ${ library.complete_elements().last().parent.question_in_list }
+  - Heading: changes['issues'][i].fields['heading']
+    default: ${ library.complete_elements().last().heading }
+    datatype: text
+    required: False
+  - note: |
+      Cloned Heading: ${ library.complete_elements().last().parent.heading }
+  - Subheading: changes['issues'][i].fields['subheading']
+    default: ${ library.complete_elements().last().subheading }
+    datatype: text
+    required: False
+  - note: |
+      Cloned Subheading: ${ library.complete_elements().last().parent.subheading }
+  - Warning: changes['issues'][i].fields['warning']
+    default: ${ library.complete_elements().last().warning }
+    datatype: area
+    required: False
+  - note: |
+      Cloned Warning: ${ library.complete_elements().last().parent.warning}
+  - Why: changes['issues'][i].fields['why']
+    default: ${ library.complete_elements().last().why }
+    datatype: area
+    required: False
+  - note: |
+      Cloned Why: ${ library.complete_elements().last().parent.why }
+  - Most Common: changes['issues'][i].fields['most_common']
+    default: library.complete_elements().last().most_common
+    datatype: yesno
+    required: False
+  - Subsets Question: changes['issues'][i].fields['subsets_question']
+    default: ${ library.complete_elements().last().subsets_question }
+    datatype: text
+    required: False
+  - note: |
+      Cloned Subsets Question: ${ library.complete_elements().last().parent.subsets_question }
+  - note: |
+      **Subsets**
+      
+			${ library.complete_elements().last().objectlinks['subsets'].table }
+			
+			${ library.complete_elements().last().objectlinks['subsets'].add_action() }
+			
+			Cloned subsets:
+			
+			${ library.complete_elements().last().parent.objectlinks['subsets'].table }
+  - note: |
+      **LegalObjects**
+      
+			${ library.complete_elements().last().objectlinks['legalObjects'].table }
+			
+			${ library.complete_elements().last().objectlinks['legalObjects'].add_action() }
+			
+			Cloned LegalObjects:
+      
+			${ library.complete_elements().last().parent.objectlinks['legalObjects'].table }
+  - note: |
+      **Next Steps**
+      
+			${ library.complete_elements().last().objectlinks['steps'].table }
+			
+			${ library.complete_elements().last().objectlinks['steps'].add_action() }
+      
+      Cloned Next Steps:
+      
+			${ library.complete_elements().last().parent.objectlinks['steps'].table }
+  - note: |
+      **Options**
+      
+			${ library.complete_elements().last().objectlinks['options'].table }
+			
+			${ library.complete_elements().last().objectlinks['options'].add_action() }
+			
+			Cloned Options:
+      
+			${ library.complete_elements().last().parent.objectlinks['options'].table }
+  - note: |
+      **Laws**
+      
+			${ library.complete_elements().last().objectlinks['law_link'].table }
+			
+			${ library.complete_elements().last().objectlinks['law_link'].add_action() }
+			
+			Cloned Laws:
+      
+			${ library.complete_elements().last().parent.objectlinks['law_link'].table }
+  - note: |
+      **Related Issues**
+      
+			${ library.complete_elements().last().objectlinks['related_issues'].table }
+			
+			${ library.complete_elements().last().objectlinks['related_issues'].add_action() }
+			
+			Cloned related issues:
+      
+			${ library.complete_elements().last().parent.objectlinks['related_issues'].table }
+      
+continue button field: changes['issues'][i].edit_input_issue_clone
+---

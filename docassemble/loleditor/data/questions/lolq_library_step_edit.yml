@@ -1,0 +1,42 @@
+generic object: Step
+question: Edit Step Object
+subquestion: |
+fields:
+  - Name: x.name
+    default: ${ x.name }
+    datatype: text
+    required: False
+  - Title: x.title
+    default: ${ x.title }
+    datatype: text
+    required: False
+  - Explanation: x.explanation 
+    default: ${ x.explanation }
+    datatype: text
+    required: False
+  - More Help: x.more_help
+    default: ${ x.more_help }
+    datatype: text
+    required: False
+  - Requirement: x.requirement
+    default: ${ x.requirement }
+    datatype: text
+    required: False
+  - Warning: x.warning
+    default: ${ x.warning }
+    datatype: text
+    required: False
+  - Link: x.link
+    default: ${ x.link}
+    datatype: text
+    required: False
+continue button field: x.edited
+under: |
+  Options:
+  
+  ${ x.objectlinks['options'].table }
+  
+  ${ x.objectlinks['options'].add_action() }
+  
+  
+  

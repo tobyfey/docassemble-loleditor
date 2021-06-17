@@ -1,0 +1,691 @@
+modules:
+  - docassemble.base.legal
+  - .airtable
+  - .auth
+  - .params
+  - .lol
+---
+objects:
+  - app: Application
+  - app.issues: IssueObjectList.using(object_type=IssueObject, set_instance_name = True,complete_attribute="complete",)
+  - app.legalObjects: LegalObjectList.using(object_type=LegalObject, ask_number=True,complete_attribute = "complete")
+  - app.specific_factors:  SFDict.using(object_type=SF, auto_gather=False, gathered=True)
+  - app.match_dict: ProtocolsAll.using(object_type=Protocol.using(object_type=ProtocolFactor, auto_gather=False), auto_gather=False)
+  - app.ol_collections: DADict.using(object_type=DAList.using(ask_object_type=True,ask_number=True,complete_attribute = "complete"), auto_gather = False)
+  - app.infosheet: DADict.using(object_type=DAObject, auto_gather = False, complete_attribute = "complete")
+  - library: DAList.using(ask_object_type=True, complete_attribute="complete")
+  - protocols: ProtocolsAll.using(object_type=Protocol.using(object_type=ProtocolFactor,ask_number = True), ask_number = True, complete_attribute="complete")
+  - changes: DADict.using(there_are_any=False,object_type=DADict.using(object_type=ChangeObject,there_are_any=False,complete_attribute="complete"))
+  - additions: DADict.using(there_are_any=False,object_type=DADict.using(object_type=ChangeObject,there_are_any=False,complete_attribute="complete"))
+  - all_fields: DAObject
+  - api_dictionary: DADict
+---
+generic object: LegalObject
+objects:
+  - x.allegations: DAList.using(object_type=LegalObject, there_are_any=True, complete_attribute = "complete")
+---
+generic object: Protocol
+objects:
+  - x.facts: FactObjectList.using(object_type=FactObject,ask_number=True,complete_attribute = "complete")
+---
+initial: True
+code: |
+  counter = 0
+  for table in changes.keys():
+    for a_id in changes[table].keys():
+      changes[table][a_id].complete
+      counter = counter + 1
+    for a_id in additions[table].keys():
+      additions[table][a_id].complete
+      counter = counter + 1
+  if counter > 0:
+    menu_items = [ action_menu_item('Update Airtable','update_airtable')]
+  if defined('start_choice') and start_choice == 'library':
+    menu_items = [ action_menu_item('Print','library_print')]
+---
+mandatory: True
+code: |
+	if start_choice == "library":
+	  library.finished
+	elif start_choice == "app":
+	  if not defined('protocols'):
+	    filter_active = True
+	    filter_county = "None"
+	    filter_practice_group = "None"
+	    filter_issue = "None"
+	  app.finished
+	elif start_choice == "location":
+	  location_finished
+comment: |
+  The mandatory block run by the computer, asking for the variable start_choice
+---
+comment: |
+  lolq_start.yml
+---
+code: |
+	if library.final_choice == "test":
+		start_choice = 'app'
+		re_run_logic()
+  elif library.final_choice == 'return':
+    undefine('library')
+    reconsider('start_choice')
+    re_run_logic()
+	else:
+		library.finished = True 
+comment: |
+  If the user selects library, this block will be called to define library.finished, which will ask the .  This question would also be called to define start_choice, which may cause problems, but lolq_start.yml is included after this block, so it will be asked first.
+---
+comment: |
+  lolq_library_final_choice.yml
+  includes attachment for .summary_sheet
+  
+  This question will call for library.there_are_any
+---
+code: |
+  library.there_are_any = True
+---
+code: |
+  if len(library.complete_elements()) == 0:
+    library.new_object_type = IssueObject
+  elif library.complete_elements().last().review_choice == "housing_clone":
+    library.new_object_type = IssueObject
+  elif library.complete_elements().last().review_choice == "stage_clone":
+    library.new_object_type = IssueObject
+  elif library.complete_elements().last().review_choice == "subset":
+    library.new_object_type = IssueObject
+  elif library.complete_elements().last().review_choice == "legal_action":
+    library.new_object_type = LegalObject
+  elif library.complete_elements().last().review_choice == "elements":
+    library.new_object_type = LegalObject
+---
+only sets: library.there_is_another
+code: |
+  if library.complete_elements().last().review_choice in ["legal_action", "housing_clone","subset","stage_clone","elements"]:
+    library.there_is_another =  True
+  elif library.complete_elements().last().review_choice == "edit":
+    if library.complete_elements().last().object_type_name == "IssueObject":
+      if changes['issues'].there_are_any:
+        changes['issues'].there_is_another = True
+        undefine("changes['issues'].gathered")
+      else:
+        changes['issues'].there_are_any = True
+    if library.complete_elements().last().object_type_name == "LegalObject":
+      if changes['legalObjects'].there_are_any:
+        changes['legalObjects'].there_is_another = True
+        undefine("changes['legalObjects'].gathered")
+      else:
+        changes['legalObjects'].there_are_any = True
+    re_run_logic()
+  elif library.complete_elements().last().review_choice == "return":
+    undefine('intro_page_director')
+    library.there_is_another =  False
+---
+code: |
+  changes[i].there_is_another = False
+---
+comment: |
+  lolq_library_review_issue.yml
+  lolq_library_review_legal.yml
+---
+code: |
+  changes[i].new_item_name = library.complete_elements().last().new_a_id
+---
+code: |
+  for protocol_name in protocols.keys():
+    if hasattr(protocols[protocol_name],'edited'):
+      changes['Protocols'].new_item_name = protocols[protocol_name].id
+---
+generic object: ChangeObject
+code: |
+  x.fields = dict()
+---
+generic object: ChangeObject
+code: |
+  if library.complete_elements().last().object_type_name=="IssueObject":
+    if hasattr(library.complete_elements().last(),'type_of_clone'):
+      x.edit_input_issue_clone
+    else:
+      x.edit_input_issue
+  elif library.complete_elements().last().object_type_name=="LegalObject":
+    if hasattr(library.complete_elements().last(),'type_of_clone'):
+      x.edit_input_legal_clone
+    else:
+      x.edit_input_legal
+  x.got_edits = True
+comment: |
+  This block calls the appropriate page to edit.
+  
+  What about objectLinks that are edited?  It seems like i could make this block include it or I could have it do all this in the
+---
+code: |
+  changes['Protocols'][i].edit_input_fact
+  changes['Protocols'][i].got_edits = True
+---
+comment: |
+  x.edit_input* are the continue button fields for 
+  lolq_library_edit_issue.yml
+  lolq_library_edit_issue_clone.yml 
+  lolq_library_edit_legal.yml
+  lolq_library_edit_legal_clone.yml
+  
+  These pages also have tables of Reference Fields like Steps and Options, and all the tables are in lolq_library_edit_issue.yml
+  
+  If a Step or Option or Law_Link is edited, it will call the following questions to edit:
+  lolq_library_step_edit.yml
+  lolq_library_option_edit.yml
+  lolq_library_law_link_edit.yml
+  
+  If added, it will add one of these questions:
+  lolq_library_step_add.yml
+  lolq_library_option_add.yml
+  lolq_library_law_link_add.yml
+  
+  I NEED TO FIGURE OUT EXACTLY WHEN REFERENCE FIELDS ARE ADDED FROM AIRTABLE
+---
+generic object: ChangeObject
+code: |
+  x.index_number = library.current_index()
+  for field in library[x.index_number].all_fields:
+    if field in x.fields.keys():
+      setattr(library[x.index_number], field, x.fields[field])
+  x.update_local_library = True
+---
+code: |
+  tempcounter = 0
+---
+code: |
+  if location_final_choice == 'test':
+    start_choice = 'app'
+  if location_final_choice == 'return':
+    reconsider('start_choice')
+  location_finished = True
+---
+comment: |
+  location final_choice in lolq_location_final_choice.yml, which will ask for protocols
+  
+  protocols is defined by lol_airtable.yml but will need to define:
+  filter_active
+  filter_county
+  filter_practice_group
+  filter_issue
+  
+  lolq_location_start.yml will be called to define these variables
+  
+  when lolq_location_final_choice.yml is shown, users will have a chance to edit, which will call protocols[i].complete or add protocols, which will call protocols.new_item_name and then protocols[i].complete
+---
+generic object: Protocol
+code: |
+  if hasattr(x,'id'):
+    changes['Referral'].new_item_name = x.id
+  else:
+    additions['Referral'].there_are_any = True
+    additions['Referral'].append(x)
+  x.update_local_library = True
+---
+code: |
+  app.issues.finished
+  app.legalObjects.finished
+  app.match_dict.finished
+  app.completed
+  app.finished = True
+---
+code: |
+	for issue in app.issues:
+	  issue.complete
+	app.issues.finished = True
+---
+code: |
+  app.issues.there_are_any = True
+---
+code: |
+  app.issues[i].get_starter_api
+  app.issues[i].lists_added
+  app.issues[i].objectlinks_added
+  app.issues[i].objectlinks_collected
+  app.issues[i].fields_from_list_added
+  app.issues[i].clones_added
+  undefine('app.issues[i].get_api','app.issues[i].lists_added','app.issues[i].objectlinks_added','app.issues[i].fields_from_list_added','app.issues[i].clones_added','app.issues[i].objectlinks_collected','app.issues[i].sf_added')
+  app.issues[i].starter_at_added = True
+---
+code: |
+  if app.issues[i].more_preclones or hasattr(app.issues[i],"set_more_preclones"):
+    undefine('app.issues[i].clone_a_id','app.issues[i].clone_code')
+    reconsider('app.issues[i].more_preclones')
+  else:
+    app.issues[i].preclones_complete = True
+---
+only sets: app.issues[i].more_preclones
+code: |
+  if not app.issues[i].has_preclones:
+    undefine('app.issues[i].get_clone_api','app.issues[i].clone_lists_added','app.issues[i].clone_objectlinks_added','app.issues[i].clones_added','app.issues[i].clone_a_id','app.issues[i].sf_added')
+    app.issues[i].more_preclones = False
+  else:
+    for clone_name in app.issues[i].clones:
+      clone_counter = 0
+      if len(app.issues[i].clones[clone_name]) > 0 and app.issues[i].clones[clone_name].is_preclone:
+        if app.issues[i].clones[clone_name].clone_a_id == "noneOfTheAbove":
+          app.issues[i].more_preclones = False
+        else:
+          app.issues[i].clone_a_id = app.issues[i].clones[clone_name].clone_a_id
+          app.issues[i].clone_name = clone_name
+          app.issues[i].preclone_added
+          undefine('app.issues[i].get_clone_api','app.issues[i].clone_lists_added','app.issues[i].clone_objectlinks_added','app.issues[i].clone_a_id')
+          app.issues[i].more_preclones = True
+          clone_counter += 1
+    if clone_counter == 0:
+      undefine('app.issues[i].get_clone_api','app.issues[i].clone_lists_added','app.issues[i].clone_objectlinks_added','app.issues[i].clone_a_id')
+      app.issues[i].more_preclones = False
+---
+code: |
+	app.issues[i].get_clone_api
+	app.issues[i].clone_lists_added
+	app.issues[i].clone_objectlinks_added
+	app.issues[i].clones_added
+	app.issues[i].sf_added
+	app.issues[i].preclone_added = True
+---  
+code: |
+  if app.issues[i].more_subsets:
+    undefine('app.issues[i].more_preclones','app.issues[i].h_preclones','app.issues[i].clone_a_id','app.issues[i].clone_code','app.issues[i].more_subsets','app.issues[i].question_code','app.issues[i].new_a_id','app.issues[i].subset_added', 'app.issues[i].get_api', 'app.issues[i].lists_added', 'app.issues[i].objectlinks_added', 'app.issues[i].fields_from_list_added','app.issues[i].clone_objectlinks_added','app.issues[i].clones_added', 'app.issues[i].clone_lists_added','app.issues[i].objectlinks_collected','app.issues[i].sf_added') 
+    reconsider('app.issues[i].preclones_complete')
+  else:
+    app.issues[i].subsets_complete = True
+comment: |
+  This block will loop the question back to .preclones_complete, if there are .more_subsets (which is set by the Airtable block, that just added new info to the issue
+---
+code: |
+  if app.issues[i].has_preclones:
+    undefine('app.issues[i].more_preclones','app.issues[i].clone_a_id','app.issues[i].clone_code','app.issues[i].more_subsets','app.issues[i].question_code','app.issues[i].new_a_id','app.issues[i].subset_added', 'app.issues[i].get_api', 'app.issues[i].lists_added', 'app.issues[i].objectlinks_added','app.issues[i].clones_added', 'app.issues[i].fields_from_list_added','app.issues[i].objectlinks_collected','app.issues[i].sf_added') 
+    reconsider('app.issues[i].preclones_complete')
+  elif len(app.issues[i].objectlinks['subsets']) == 0:
+    app.issues[i].more_subsets = False
+  else:
+    if app.issues[i].new_a_id == "None":
+      app.issues[i].more_subsets = False
+    elif app.issues[i].new_a_id == "Other":
+      app.issues[i].more_subsets = False
+    else:
+      app.issues[i].subset_added    
+      undefine('app.issues[i].more_preclones','app.issues[i].clone_a_id','app.issues[i].clone_code','app.issues[i].more_subsets','app.issues[i].question_code','app.issues[i].new_a_id','app.issues[i].subset_added', 'app.issues[i].get_api', 'app.issues[i].lists_added', 'app.issues[i].objectlinks_added','app.issues[i].clones_added', 'app.issues[i].fields_from_list_added','app.issues[i].objectlinks_collected','app.issues[i].sf_added') 
+      reconsider('app.issues[i].preclones_complete')
+      
+---
+code: |
+  app.issues[i].get_api
+  app.issues[i].lists_added
+  app.issues[i].objectlinks_added
+  app.issues[i].fields_from_list_added
+  app.issues[i].clones_added
+  app.issues[i].objectlinks_collected
+  app.issues[i].sf_added
+  app.issues[i].subset_added = True
+---
+comment: |
+  lolq_app_issue.yml
+---
+code: |
+  if app.issues[i].more_postclones:
+    reconsider('app.issues[i].more_postclones')
+  else:
+    app.issues[i].postclones_complete = True
+comment:
+  If there are more postclones, there is no need to go back.  This isn't an issue now, because Stage is the only postclone that I use.
+---
+code: |
+  if not app.issues[i].has_postclones:
+    app.issues[i].more_postclones = False
+  else:
+    for clone_name in app.issues[i].clones:
+      clone_counter = 0
+      if len(app.issues[i].clones[clone_name]) > 0 and not app.issues[i].clones[clone_name].is_preclone:
+        if app.issues[i].clones[clone_name].clone_a_id == "noneOfTheAbove":
+          app.issues[i].more_postclones = False
+        else:
+          app.issues[i].clone_a_id = app.issues[i].clones[clone_name].clone_a_id
+          app.issues[i].clone_name = clone_name
+          app.issues[i].postclone_added
+          undefine('app.issues[i].get_clone_api','app.issues[i].clone_lists_added','app.issues[i].clone_objectlinks_added','app.issues[i].clone_a_id')
+          app.issues[i].more_postclones = True
+          clone_counter += 1
+    if clone_counter == 0:
+      undefine('app.issues[i].get_clone_api','app.issues[i].clone_lists_added','app.issues[i].clone_objectlinks_added','app.issues[i].clone_a_id')
+      app.issues[i].more_postclones = False
+---
+code: |
+  app.issues[i].get_postclone_api
+  app.issues[i].clone_lists_added
+  app.issues[i].clone_objectlinks_added
+  app.issues[i].fields_from_list_added
+  app.issues[i].objectlinks_collected
+  app.issues[i].sf_added
+  app.issues[i].postclone_added = True
+---
+code: |
+  app.specific_factors[i].there_are_any = True
+---
+code: |
+  app.specific_factors[i].there_is_another = False
+---
+code: |
+  app.specific_factors['issues'].add(app.issues[i].id)
+  if hasattr(app.issues[i],'parent'):
+    app.specific_factors['issues'].add(app.issues[i].parent)
+  for clone_name in app.issues[i].allclones:
+    if len(app.issues[i].cloned[clone_name]) > 0:
+      app.specific_factors[clone_name].add(app.issues[i].cloned[clone_name][0])
+  app.issues[i].sf_added = True
+comments: |
+  Why is this here instead of in protocols?  Is there a better way to do the parent thing?
+  Why not add the
+---
+code: |
+  app.issues.there_is_another = False
+comment: |
+  Can change this out to ask about related issues.
+---
+code: |
+  for legal_object in app.legalObjects:
+    legal_object.ismet
+  app.legalObjects.finished = True
+---
+generic object: LegalObjectList
+code: |
+  app.legalObjects.target_number = len(app.ol_collections['legalObjects'])
+comment: |
+  This will set the legal_objects to the number of legal objects attached to all of the issues.  .legalObjects is the list of all the legal actions, and legal_elements is the attribute within a legal_object of sub-elements
+---
+generic object: LegalObject
+objects: 
+  - x.legal_elements: LegalObjectList.using(object_type=LegalObject, ask_number = True, complete_attribute='complete')
+---
+generic object: LegalObject
+code: |
+  if x.allegations_required:
+    x.legal_elements.target_number = len(x.allegations)
+  else:
+    x.legal_elements.target_number = len(x.objectlinks['elements'].aid_list)
+---
+generic object: LegalObject
+code: |
+  if x.more_clones:
+    reconsider('x.more_clones')
+  else:
+    x.no_more_clones = True  
+---
+generic object: LegalObject
+code: |
+  if x.has_clones:
+    for field_name in x.clones.keys():
+      if field_name in app.specific_factors:
+        for clone_id in app.specific_factors[field_name]:
+          temp_api = api_dictionary[field_name].get(clone_id)
+          for lo_id in x.clones[field_name].question_code:
+            for key in lo_id.keys():
+              if lo_id[key] == temp_api['fields']['name']:
+                x.clone_legob = key
+              else:
+                x.clone_legob = "None"
+    if not x.clone_legob == "None":
+      x.get_api_clone
+      x.clone_lists_added
+      x.active_objectlinks_added
+      x.fields_from_list_added
+      if hasattr(x,'clones') and len(x.clones) > 0:
+        x.more_clones = True
+      else:
+        x.more_clones = False
+    else:
+      x.more_clones = False
+  else:
+    x.more_clones = False
+comment: |
+  Checks to see if there are clones.  If there are, a LegalObject method is used to update the current LegalObject, by replacing any of the information fields when that information field is not blank in the clone object.
+  Because the object is updated, it can check clones again.  The clones field will always change, because the clone will not appear in the clones field.  So it checks to see if there are clones.  x.more_clones is called in the .ismet evaluation block, and if x.more_clones is not equal to "No_More_Clones", then x.more_clones gets reconsidered, forcing it to come back to this block.
+---
+comment: |
+  lolq_app_legalobject_clone.yml
+  NEED TO FIX QUESTION CODE
+---
+generic object: LegalObject
+code: |
+  if not hasattr(x, 'factslist'):
+    if x.legal_elements.ismet:
+      x.ismet = True
+    else:
+      x.ismet = False
+  else:
+    if x.facts_elements_interaction == "factsANDelements":
+      if not x.facts.ismet:
+        x.ismet = x.facts.ismet
+      else:
+        if x.legal_elements.ismet:
+          x.ismet = True
+        else:
+          x.ismet = False
+    elif x.facts_elements_interaction == "factsORelements":
+      if x.facts.ismet:
+        x.ismet = True
+      else:
+        if x.legal_elements.ismet:
+          x.ismet = True
+        else:
+          x.ismet = False
+    else:
+      x.ismet = x.facts.ismet
+comment: |
+  The interview determines whether LegalObjects are "met", meaning that the LegalObject is True if it helps the Plaintiff win the type of case associated with the top-level LegalObject.
+  First, it is checked whether there are any clones of the LegalObject.  A clone is the same legal issue with different rules because of a different jurisdiction or type of housing.
+  Next, it checks whether "facts", which is a list of FactObjects, is "met".  It checks this by prompting a FactObject question, and then using the response in a formula, as described in that block.
+  Facts are checked first for two reasons.  First, if a LegalObject has both FactObjects and other LegalObjects as elements, it means that each of the element LegalObjects require that FactObject to be a certain answer.  For example, the Corporate Plaintiff has a FactObject about whether the Plaintiff is a corporation.  If the Plaintiff is not a corporation, then the "facts" is met, and the LegalObjects shouldn't be checked.  Right now, it doesn't work this way - if the facts.ismet = False, then the legalObject is false, and it won't need to ask the other questions.  (What about the situation where a fact object might be cuz of a defense (defense that there is no notice) but if there is notice, then these other defenses should be checked.
+  Second, LegalObjects that are elements of a LegalObject with a FactObject may be conditioned on how that FactObject question is answered.  For example, Grounds has a FactObject of grounds_listed_in_complaint.  After asking what grounds are listed in the complaint, the LegalObjects are only relevant if the grounds listed.  So if the grounds is "Nonpayment", only the Nonpayment LegalObject will be relevant, and the Rule Violations are nto relevant (meaning they can be marked .ismet - .ismet includes not being relevant.)
+  So I have to make it so that if in Corporate Plaintiff, is_fictitious_name = False evaluates to True, and the legal objects are not needed and the legal object is not added to defense.  If is_fictitious_name = True, the fact formula evaluates to False and the legal objects are not needed.
+  In the case of Grounds, the fact_formula should always evaluate to False, so the legalObjects are always evaluated
+  In a "final" LegalObject, where there are no elements, then if there is a defense, facts.ismet should be False, and then the legalobject would be False.
+---
+generic object: LegalObjectList
+code: |
+  counter = 0
+  for legalobject in x:
+    if legalobject.ismet or legalobject.ismet is None:
+        counter += 1
+  if counter == len(x):
+    x.ismet = True
+  else:
+    x.ismet = False
+comment: |
+  This section determines if an legal object is "met" by seeing if each of the legal objects in the elements fields are met.  
+---
+comment: |
+  lolq_app_facts - continue button field id factsgathered
+---
+generic object: FactObjectList
+code: |
+  for fact in x:
+    x
+  x.factsgathered
+  for fact in x:
+    if defined(fact.field):
+      fact.appvalue = value(fact.field)
+  exec(x.fact_formula)
+  x.ismet = facts_are_met()
+comment: |
+  The formula in the AirTable is called, which looks for the definition of the variables in the formula.  Is it even necessary to have the facts as children.  A sample fact_formula looks like this
+  def facts_are_met():
+    if notice_exists and notice_attached_to_complaint:
+      return True
+    else:
+      return False
+  So are the variables in the fact_formula set, in this case "notice_exists" and "notice_attached_to_complaint".  If that is the case, then I can put things like that in the fact_formula and still just evaluate to True/False.  But what does True or False mean for something like Corporate_Plaintiff?  The LegalObject should be True if the Plaintiff is either not a corporation or if all the legal objects are met.  So the fact_formula should evaluate to True if the Plaintiff is not a corporation, and to False if
+---
+code: |
+  app.match_dict.all_false()
+  for protocol in app.match_dict.keys():
+    app.match_dict[protocol].match
+  app.match_dict.finished = True
+---
+code: |
+  app.match_dict.new(protocols.keys())
+  app.match_dict.gathered = True
+---
+code: |
+  app.match_dict[i].qualify_sentence = protocols[i].qualify_sentence
+  if len(protocols[i]['issues']) == 0 or not protocols[i]['issues'].elements_set.isdisjoint(app.specific_factors['issues']):
+    app.match_dict[i]['issues'] = True
+  	if len(protocols[i]['Jurisdiction']) == 0 or not protocols[i]['Jurisdiction'].elements_set.isdisjoint(app.specific_factors['Jurisdiction']):
+    	app.match_dict[i]['Jurisdiction'] = True
+  	  if len(protocols[i]['Stage']) == 0 or not protocols[i]['Stage'].elements_set.isdisjoint(app.specific_factors['Stage']):
+    	  app.match_dict[i]['Stage'] = True
+  	    if len(protocols[i]['TypeOfHousing']) == 0 or not protocols[i]['TypeOfHousing'].elements_set.isdisjoint(app.specific_factors['TypeOfHousing']):
+    	    app.match_dict[i]['TypeOfHousing'] = True
+    	  else:
+    	    app.match_dict[i]['TypeOfHousing'] = False
+    	else:
+    	  app.match_dict[i]['Stage'] = False
+    else:
+    	app.match_dict[i]['Jurisdiction'] = False
+  else:
+    app.match_dict[i]['issues'] = False
+  app.match_dict[i].gathered = True
+
+comment: |
+  for sfkey in protocols[i].keys():
+    if len(protocols[i][sfkey]) == 0 or not protocols[i][sfkey].elements_set.isdisjoint(app.specific_factors[sfkey]):
+      app.match_dict[i][sfkey] = True
+    else:
+      app.match_dict[i][sfkey] = False
+      break
+
+  This section determines if each requirement in the protocol is satisfied by seeing if there is any overlap between the protocol's set of airtable ids in protocols['HCED1a']['County'] with the set of AirTable ids from the same table in specific_factors['County'].  If there is an overlap (or not disjoint), then it will set match_dict['HCED1a']['County'] to True.  A block below with then see if the all of the factors in match_dict['HCED1a'] are true.
+---
+generic object: ProtocolFactor
+code: |
+  x.elements_set = set()
+  for aid in x:
+    x.elements_set.add(aid[0])
+---
+generic object: Protocol
+code: |
+  if x.all_true() and x.qualify == 1:
+    x.match = True
+  else:
+    x.match = False 
+comment: |
+  This is used in .match_dict, which is like a copy of protocols, except .match_dict['HCED1a']['County'] equals either true or false, while protocols['HCED1a']['County']  would be a set of AirTable ids for records in County.  This block sets the attribute .match for the Protocol (which is .match_dict['HCED1a'] to be either true or false.  Despite protocols also using Protocol, there won't be any reason why protocol['HCED1a'].match will ever be sought.
+  Tests to see if all of the factors of a Protocol are met.  .protocols is a dictionary with keys set as the names of specific protocols, like HCED2.  The values of the dictionary are sets of factors.
+  .all_true() is a function from .legal, I believe.
+---
+generic object: Protocol
+code: |
+  if len(x.facts) > 0:
+    x.facts.factsgathered
+  exec(x.qualify_sentence)
+  x.qualify = qualify()
+comment: |
+  This section runs the qualify_sentence from the Protocols table, which will look something like this:
+  
+  def qualify():
+    if date_of_hearing > date_intake_completed.plus(days=3):
+      if domestic_violence or sexual_assault or stalking:
+        return 1
+      elif disability_household_member:
+        return 1
+      else:
+        return 0
+    else:
+      return 0
+    
+  The formula statement uses FactObject variable names and causes the interview to ask questions to define those variables.  Why does this one use "Good" or "Bad"?  That's obviously a mistake.  The next block tests to see if it is equal to 1.  So this protocol will never "qualify".
+---
+code: |
+  if len(protocols[i].factslist) > 0:
+    app.match_dict[i].factsgathered
+  exec(protocols[i].qualify_sentence)
+  app.match_dict[i].qualify = qualify()
+---
+generic object: Protocol
+code: |
+  x.facts.label = "Please answer the following questions"
+  x.facts.explanation = ""
+  x.facts.question = ""
+---
+code: |
+  app.match_dict[i].facts.target_number = protocols[i].facts.target_number
+---
+code: |
+  if app.final_choice == 'restart':
+    command('restart')
+  elif app.final_choice == 'make_infosheet':
+    explanation_block_added
+    reconsider('infosheet_statement', 'infosheet_list')
+    forget_result_of("info_screen")
+    reconsider('end_choices','app.final_choice')
+  elif app.final_choice =='infosheet_editor':
+    explanation_block_edited
+    reconsider('infosheet_statement', 'infosheet_list')
+    forget_result_of("info_screen")
+    reconsider('end_choices','app.final_choice')
+  elif app.final_choice == 'save_data':
+    save_data
+  app.completed = True
+---
+comment: |
+  lolq_app_final_choice.yml
+---
+code: |
+  infosheet_list = list()
+  if hasattr(app.issues.last(),'explanation_block'):
+    infosheet_list.append(infosheet)
+    infosheet_statement = "An infosheet can be downloaded below.  The infosheet can be edited by clicking the Edit or Make Infosheet Button."
+  elif defined('explanation_block'):
+    infosheet_list.append(infosheet)
+    infosheet_statement = "An infosheet can be downloaded below.  The infosheet can be edited by clicking the Edit or Make Infosheet Button."
+  else:
+    infosheet_statement = "No infosheet has been made.  The infosheet can be made by clicking the Edit or Make Infosheet Button."
+---
+attachment:
+  filename: Infosheet 
+  variable name: infosheet
+  docx template file: lol_infosheet.docx
+  description: |
+    Specific legal information about your legal issue.   
+---
+include:
+  - lol_airtable.yml
+  - lol_complete_attribute.yml
+  - lol_get_aid.yml
+  - lol_questions.yml
+  - lol_infosheet.yml
+  - lolq_start.yml
+  - lolq_app_issue.yml
+  - lolq_app_final_choice.yml
+  - lolq_app_infosheet_editor.yml
+  - lolq_app_infosheet_maker.yml
+  - lolq_app_legalobject_allegations.yml
+  - lolq_app_legalobject_clone.yml
+  - lolq_app_issue_preclones.yml
+  - lolq_app_issue_postclones.yml
+  - lolq_app_facts.yml
+  - lolq_location_final_choice.yml
+  - lolq_library_final_choice.yml
+  - lolq_library_review_issue.yml
+  - lolq_library_review_issue_clone.yml
+  - lolq_library_review_legal.yml
+  - lolq_library_review_legal_clone.yml
+  - lolq_library_legalObject_add.yml
+  - lolq_library_edit_issue.yml
+  - lolq_library_edit_issue_clone.yml
+  - lolq_library_edit_legal.yml
+  - lolq_library_edit_legal_clone.yml
+  - lolq_library_step_add.yml
+  - lolq_library_step_edit.yml
+  - lolq_library_option_add.yml
+  - lolq_library_option_edit.yml
+  - lolq_library_law_link_add.yml
+  - lolq_library_law_link_edit.yml
+  - lolq_library_facts_add.yml
+  - lolq_library_facts_edit.yml
+  - lolq_specific_factor.yml
+  - lolq_update_airtable.yml
+  - lolq_location_start.yml
+  - lolq_location_edit.yml
+  - lolq_location_add.yml

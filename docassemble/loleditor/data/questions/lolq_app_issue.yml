@@ -1,0 +1,49 @@
+---
+question: ${ app.issues[i].name }
+subquestion: |
+  % if not app.issues[i].definition == "":
+  DEFINITION: ${ app.issues[i].definition }
+  % endif  
+fields: 
+  - Pick a subset: app.issues[i].new_a_id
+    input type: combobox
+    code: app.issues[i].question_code
+under: |
+
+  INFORMATION ABOUT THIS ISSUE
+
+  % if not app.issues[i].heading == "":
+  HEADING: ${ app.issues[i].heading }
+  % endif
+  
+  % if not app.issues[i].subheading == "":
+  SUBHEADING: ${ app.issues[i].subheading }
+  % endif
+  
+  
+  % if not app.issues[i].explanation == "":
+  EXPLANATION: ${ app.issues[i].explanation }
+  % endif
+  
+  % if not app.issues[i].HOW == "":
+  HOW: ${ app.issues[i].HOW }
+  % endif
+  
+  % if not app.issues[i].why == "":
+  WHY: ${ app.issues[i].why }
+  % endif
+  
+  % if not app.issues[i].warning == "":
+  WARNING: ${ app.issues[i].warning }
+  % endif
+  
+comment: |
+  Question block to add new subset information - still in the same issue.  Should I make something for Other?  Add in definitions for subsets?
+---
+code: |
+  app.issues[i].question_code = list()
+  for indexnumber in range(len(app.issues[i].objectlinks['subsets'].aid_list)):
+      app.issues[i].question_code.append({app.issues[i].objectlinks['subsets'].aid_list[indexnumber]:app.issues[i].objectlinks['subsets'].name_list[indexnumber]})
+  app.issues[i].question_code.append({"Other":"Other"})
+  app.issues[i].question_code.append({"None":"None"})
+---

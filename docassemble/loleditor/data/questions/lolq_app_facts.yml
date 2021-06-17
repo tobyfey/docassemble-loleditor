@@ -1,0 +1,39 @@
+---
+generic object: FactObjectList
+question:  ${ x.label }
+subquestion: |
+	${ x.explanation }
+
+	${ x.question }
+
+	% if hasattr(x,'html'):
+	${ x.html }
+	% endif
+fields:
+	code: |
+		x.questioncode
+continue button field: x.factsgathered
+comment: |
+	The question for facts - the explanation are set by tables in the AirTable
+---
+generic object: FactObjectList
+code: |
+  x.questioncode = list()
+  for fact in x:
+    adict = dict()
+    for field in ['field','label','datatype','image','default']:
+      if hasattr(fact,field):
+        adict[field] = getattr(fact,field)
+    if hasattr(fact,'choices') and not fact.choices == "":
+      adict['code']= fact.choices
+    if hasattr(fact,'not_required'):
+      adict['required'] = not fact.not_required
+    else:
+      adict['required'] = True
+    x.questioncode.append(adict)
+    if hasattr(fact,'help'):
+      bdict = dict()
+      bdict['note'] = fact.help
+      x.questioncode.append(bdict)
+---
+

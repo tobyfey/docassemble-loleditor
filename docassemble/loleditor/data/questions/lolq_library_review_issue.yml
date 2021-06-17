@@ -1,0 +1,145 @@
+---
+generic object: IssueObject
+question: ${ x.name }
+subquestion: |
+	Definition:  ${ x.definition }
+	
+	Question:  ${ x.question }
+	
+	Explanation:  ${ x.explanation }
+	
+	How:  ${ x.HOW }
+	
+	Why:  ${ x.why }
+	
+	Warning:  ${ x.warning }
+	
+	Active:  ${ x.active }
+	
+	Most Common:  ${ x.most_common }
+	
+
+fields:
+  - What do you want to do?: x.review_choice
+    code: |
+      x.review_choice_code
+  - note: |
+      % if len(x.clones['TypeOfHousing']) > 0:
+      Type of Housing Clones:
+      % for toh in x.clones['TypeOfHousing'].name_list:
+   
+      - ${ toh }
+   
+      % endfor
+      % elif len(x.cloned['TypeOfHousing']) > 0:
+      Type of Housing Clones:
+      % for toh in x.cloned['TypeOfHousing']:
+   
+      - ${ toh }
+   
+      % endfor
+      
+      % else:
+      Type of Housing Clones: None.
+   
+      % endif
+    hide if: 
+      variable: x.review_choice
+      is: housing_clone
+  - Go To Type of Housing Clone: x.housing_a_id
+    datatype: radio
+    code: x.clones['TypeOfHousing'].question_code
+    show if:
+    	variable: x.review_choice
+    	is: housing_clone
+  - note: |
+      Subsets:
+      % if len(x.objectlinks['subsets']) > 0:
+      
+      % for toh in x.objectlinks['subsets'].name_list:
+      - **${ toh }**
+    
+      % endfor
+      % else:
+      None.
+   
+      % endif
+    hide if: 
+      variable: x.review_choice
+      is: subset
+  - Go To Subset: x.subset_a_id
+    datatype: radio
+    code: x.objectlinks['subsets'].question_code
+    show if:
+      variable: x.review_choice
+      is: subset
+  - note: |
+      Stage Clones:
+      % if len(x.clones['Stage']) > 0:
+      % for toh in x.clones['Stage'].name_list:
+   
+      - ${ toh }
+   
+      % endfor
+      % else:
+      None.
+   
+      % endif
+    hide if: 
+      variable: x.review_choice
+      is: stage_clone
+  - Go To Stage Clone: x.stage_a_id
+    datatype: radio
+    code: x.clones['Stage'].question_code
+    show if:
+    	variable: x.review_choice
+    	is: stage_clone
+  - note: |
+      Legal Actions:
+      % if len(x.objectlinks['legalObjects']) > 0:
+      % for toh in x.objectlinks['legalObjects']:
+   
+      - ${ toh.name }
+   
+      % endfor
+      % else:
+      None.
+   
+      % endif
+    hide if: 
+      variable: x.review_choice
+      is: legal_action
+  - Go To Legal Action: x.legal_action_a_id
+    datatype: radio
+    code: x.objectlinks['legalObjects'].question_code
+    show if:
+    	variable: x.review_choice
+    	is: legal_action
+  - note: |
+      Steps:
+      
+      % for step in x.objectlinks['steps']:
+      % if step.complete:
+      ${ step.name }
+      % endif
+      % endfor
+---
+generic object: DAObject
+code: |
+	x.review_choice_code = list()
+	if len(x.clones['TypeOfHousing']) > 0:
+    x.review_choice_code.append(['housing_clone','Navigate to a Type of Housing Clone',True])
+  if len(x.objectlinks['subsets'].aid_list) > 0:
+    if len(x.clones['TypeOfHousing']) > 0:
+      x.review_choice_code.append(['subset','Navigate to a Subset'])
+    else:
+      x.review_choice_code.append(['subset','Navigate to a Subset',True])
+  if len(x.clones['Stage']) > 0:
+    if len(x.clones['TypeOfHousing']) > 0 or len(x.objectlinks['subsets'].aid_list) > 0:
+      x.review_choice_code.append(['stage_clone','Navigate to a Stage Clone'])
+    else:
+      x.review_choice_code.append(['stage_clone','Navigate to a Stage Clone',True])
+  if len(x.objectlinks['legalObjects']) > 0:
+    x.review_choice_code.append(['legal_action','Navigate to a Legal Action'])
+  x.review_choice_code.append(['edit','Edit this'])
+  x.review_choice_code.append(['return','Return to Main Menu'])

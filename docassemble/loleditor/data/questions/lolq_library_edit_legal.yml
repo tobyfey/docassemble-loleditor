@@ -1,0 +1,152 @@
+---
+question:  Edit LegalObject - ${ library.complete_elements().last().name }
+subquestion: |
+  This is a a Legal Object.
+fields:
+  - Name: changes['legalObjects'][i].fields['name']
+    default: ${ library.complete_elements().last().name }
+    datatype: text
+    required: False
+  - Active: changes['legalObjects'][i].fields['active']
+    default: library.complete_elements().last().active }
+    datatype: yesno
+    required: False
+  - Allegations Required: changes['legalObjects'][i].fields['allegations_required']
+    default: library.complete_elements().last().allegations_required }
+    datatype: yesno
+    required: False
+  - Default: changes['legalObjects'][i].fields['default']
+    default: ${ library.complete_elements().last().default }
+    datatype: area
+    required: False
+  - Question: changes['legalObjects'][i].fields['question']
+    default: ${ library.complete_elements().last().question }
+    datatype: text
+    required: False
+  - Explanation: changes['legalObjects'][i].fields['explanation']
+    default: ${ library.complete_elements().last().explanation }
+    datatype: area
+    required: False
+  - Note: changes['legalObjects'][i].fields['note']
+    default: ${ library.complete_elements().last().note }
+    datatype: text
+    required: False
+  - More help: changes['legalObjects'][i].fields['more_help']
+    default: ${ library.complete_elements().last().more_help }
+    datatype: text
+    required: False
+  - Requirement: changes['legalObjects'][i].fields['requirement']
+    default: ${ library.complete_elements().last().requirement }
+    datatype: area
+    required: False
+  - Warning: changes['legalObjects'][i].fields['warning']
+    default: ${ library.complete_elements().last().warning }
+    datatype: area
+    required: False
+  - Link: changes['legalObjects'][i].fields['link']
+    default: ${ library.complete_elements().last().link }
+    datatype: text
+    required: False
+  - Allegations Question: changes['legalObjects'][i].fields['allegations_question']
+    default: ${ library.complete_elements().last().allegations_question }
+    datatype: text
+    required: False
+  - Allegations Fit Question: changes['legalObjects'][i].fields['allegations_fit_question']
+    default: ${ library.complete_elements().last().allegations_fit_question }
+    datatype: text
+    required: False
+  - Description: changes['legalObjects'][i].fields['description']
+    default: ${ library.complete_elements().last().description }
+    datatype: area
+    required: False
+  - Explanation If Met: changes['legalObjects'][i].fields['explanationifmet']
+    default: ${ library.complete_elements().last().explanationifmet }
+    datatype: area
+    required: False
+  - Explanation If Not Met: changes['legalObjects'][i].fields['explanationifnotmet']
+    default: ${ library.complete_elements().last().explanationifnotmet }
+    datatype: area
+    required: False
+  - Heading: changes['legalObjects'][i].fields['heading']
+    default: ${ library.complete_elements().last().heading }
+    datatype: text
+    required: False
+  - Defense Text: changes['legalObjects'][i].fields['defensetext']
+    default: ${ library.complete_elements().last().defensetext }
+    datatype: area
+    required: False
+  - Law: changes['legalObjects'][i].fields['law']
+    default: ${ library.complete_elements().last().law }
+    datatype: area
+    required: False
+  - Law Versions: changes['legalObjects'][i].fields['lawversions']
+    default: ${ library.complete_elements().last().lawversions }
+    datatype: area
+    required: False
+  - Conclusion: changes['legalObjects'][i].fields['conclusion']
+    default: ${ library.complete_elements().last().conclusion }
+    datatype: area
+    required: False
+  - note: |
+      **Elements**
+      
+			${ library.complete_elements().last().objectlinks['elements'].table }
+			
+			${ library.complete_elements().last().objectlinks['elements'].add_action() }
+  - note: |
+      **Facts**
+      
+			${ library.complete_elements().last().facts.table }
+			
+			${ library.complete_elements().last().facts.add_action() }
+  - note: |
+      **LegalObjects**
+      
+			${ library.complete_elements().last().objectlinks['legalObjects'].table }
+			
+			${ library.complete_elements().last().objectlinks['legalObjects'].add_action() }
+  - note: |
+      **Next Steps**
+      
+			${ library.complete_elements().last().objectlinks['steps'].table }
+			
+			${ library.complete_elements().last().objectlinks['steps'].add_action() }
+  - note: |
+      **Options**
+      
+			${ library.complete_elements().last().objectlinks['options'].table }
+			
+			${ library.complete_elements().last().objectlinks['options'].add_action() }
+  - note: |
+      **Laws**
+      
+			${ library.complete_elements().last().objectlinks['law_link'].table }
+			
+			${ library.complete_elements().last().objectlinks['law_link'].add_action() }
+  - note: |
+      **Related Issues**
+      
+			${ library.complete_elements().last().objectlinks['related_issues'].table }
+			
+			${ library.complete_elements().last().objectlinks['related_issues'].add_action() }
+      
+continue button field: changes['legalObjects'][i].edit_input_legal
+---
+generic object: DAObject
+table: x.objectlinks['elements'].table
+rows: x.objectlinks['elements']
+columns:
+  - Name: row_item.name
+allow reordering: False
+delete buttons: False
+---
+generic object: DAObject
+table: x.facts.table
+rows: x.facts
+columns:
+  - Name: row_item.field
+edit:
+	- edited
+allow reordering: False
+delete buttons: False
+---

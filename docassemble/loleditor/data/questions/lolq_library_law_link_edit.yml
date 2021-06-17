@@ -1,0 +1,34 @@
+---
+generic object: Law_Link
+question: Edit Law Object
+fields:
+  - Cite: x.cite
+    default: ${ x.cite }
+    datatype: text
+    required: False
+  - Quote: x.quote
+    default: ${ x.quote }
+    datatype: text
+    required: False
+  - Summary: x.summary
+    default: ${ x.summary }
+    datatype: text
+    required: False
+  - Fact Description: x.fact_description
+    default: ${ x.fact_description }
+    datatype: text
+    required: False
+  - Title: x.Title
+    default: ${ x.Title }
+    datatype: text
+    required: False
+  - Link: x.link
+    default: ${ x.link}
+    datatype: text
+    required: False
+  - Active: x.active
+    default: ${ x.active }
+    datatype: yesno
+continue button field: x.edited
+---
+  

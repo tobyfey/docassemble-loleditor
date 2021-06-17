@@ -1,0 +1,63 @@
+---
+generic object: Protocol
+question: Edit Protocol
+fields: 
+  - Referral name: x.referral_name
+  - Practice Group: x.referral_name_text
+  - Notes: x.notes
+    datatype: area
+    required: False
+  - Qualify Sentence: x.qualify_sentence
+    datatype: area
+    required: False
+  - note: |
+     Issues:
+     
+     ${ x['issues'].table }
+     
+     ${ x['issues'].add_action() }
+
+     Stage:
+     
+     ${ x['Stage'].add_action() }
+
+     ${ x['Stage'].table }
+     
+     Type of Housing:
+     
+     ${ x['TypeOfHousing'].add_action() }
+
+     ${ x['TypeOfHousing'].table }
+     
+     Counties:
+     
+     ${ x['Jurisdiction'].add_action() }
+
+     ${ x['Jurisdiction'].table }
+     
+continue button field: x.edited
+---
+table: protocols[i]['Stage'].table
+rows: protocols[i]['Stage']
+columns:
+  - Name: protocols[i]['Stage'].name_list[row_index]
+delete buttons: True
+---
+table: protocols[i]['issues'].table
+rows: protocols[i]['issues']
+columns:
+  - Name: protocols[i]['issues'].name_list[row_index]
+delete buttons: True
+---
+table: protocols[i]['TypeOfHousing'].table
+rows: protocols[i]['TypeOfHousing']
+columns:
+  - Name: protocols[i]['TypeOfHousing'].name_list[row_index]
+delete buttons: True
+---
+table: protocols[i]['Jurisdiction'].table
+rows: protocols[i]['Jurisdiction']
+columns:
+  - Name: protocols[i]['Jurisdiction'].name_list[row_index]
+delete buttons: True
+---
